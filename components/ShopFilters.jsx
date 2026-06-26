@@ -1,46 +1,142 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { CATEGORIES, fmt } from "@/lib/constants";
 
-export default function ShopFilters({ priceCeiling }) {
-  const router = useRouter();
+export default function ShopFilters({ priceCeiling, brands = [] }) {
+  const router   = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const activeCat = searchParams.get("cat") || "all";
-  const query = searchParams.get("q") || "";
-  const sort = searchParams.get("sort") || "default";
-  const maxPrice = searchParams.get("maxPrice") || "";
+  const activeCat   = searchParams.get("cat")          || "all";
+  const activeBrand = searchParams.get("brand")         || "all";
+  const query       = searchParams.get("q")             || "";
+  const sort        = searchParams.get("sort")          || "default";
+  const maxPrice    = searchParams.get("maxPrice")      || "";
+  const availability = searchParams.get("availability") || "";
+  const featured    = searchParams.get("featured")      || "";
 
-  const updateParam = (key, value) => {
+  const update = (key, value) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value === "" || value === "all" || value === "default") {
+    if (!value || value === "all" || value === "default") {
       params.delete(key);
     } else {
       params.set(key, value);
     }
     params.delete("page");
+    params.delete("view");
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const toggle = (key, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (params.get(key) === value) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+    params.delete("page");
+    params.delete("view");
     router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
-    <aside className="space-y-6">
+    <aside className="space-y-7">
+
+      {/* Search */}
+      <div>
+        <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Search</h4>
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            defaultValue={query}
+            onChange={(e) => update("q", e.target.value)}
+            placeholder="SKU, name or brand"
+            aria-label="Search products"
+            className="w-full bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none pl-8 pr-3 py-2 text-sm font-mono text-slate-700"
+          />
+        </div>
+      </div>
+
+      {/* Category */}
       <div>
         <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Category</h4>
-        <div className="flex flex-col gap-1">
-          <button onClick={() => updateParam("cat", "all")} className={`text-left px-3 py-2 text-sm font-medium ${activeCat === "all" ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-50"}`}>
+        <div className="flex flex-col gap-0.5">
+          <button
+            onClick={() => update("cat", "all")}
+            className={`text-left px-3 py-2 text-sm font-medium transition-colors ${activeCat === "all" ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-50"}`}
+          >
             All Items
           </button>
           {CATEGORIES.map((c) => (
-            <button key={c.id} onClick={() => updateParam("cat", c.id)} className={`text-left px-3 py-2 text-sm font-medium ${activeCat === c.id ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-50"}`}>
+            <button
+              key={c.id}
+              onClick={() => update("cat", c.id)}
+              className={`text-left px-3 py-2 text-sm font-medium transition-colors ${activeCat === c.id ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-50"}`}
+            >
               {c.label}
             </button>
           ))}
         </div>
       </div>
 
+      {/* Brand */}
+      {brands.length > 0 && (
+        <div>
+          <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Brand</h4>
+          <div className="flex flex-col gap-0.5">
+            <button
+              onClick={() => update("brand", "all")}
+              className={`text-left px-3 py-2 text-sm font-medium transition-colors ${activeBrand === "all" ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-50"}`}
+            >
+              All Brands
+            </button>
+            {brands.map((b) => (
+              <button
+                key={b}
+                onClick={() => update("brand", b)}
+                className={`text-left px-3 py-2 text-sm font-medium transition-colors ${activeBrand === b ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-50"}`}
+              >
+                {b}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Availability */}
+      <div>
+        <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Availability</h4>
+        <button
+          onClick={() => toggle("availability", "instock")}
+          className={`w-full text-left px-3 py-2 text-sm font-medium border transition-colors ${
+            availability === "instock"
+              ? "border-amber-500 bg-amber-50 text-amber-700"
+              : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+          }`}
+        >
+          In Stock Only
+        </button>
+      </div>
+
+      {/* Featured */}
+      <div>
+        <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Show</h4>
+        <button
+          onClick={() => toggle("featured", "true")}
+          className={`w-full text-left px-3 py-2 text-sm font-medium border flex items-center gap-2 transition-colors ${
+            featured === "true"
+              ? "border-amber-500 bg-amber-50 text-amber-700"
+              : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+          }`}
+        >
+          <Star size={13} className={featured === "true" ? "text-amber-500" : "text-slate-300"} />
+          Featured Only
+        </button>
+      </div>
+
+      {/* Max price */}
       <div>
         <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Max Price</h4>
         <input
@@ -48,37 +144,32 @@ export default function ShopFilters({ priceCeiling }) {
           min="0"
           max={priceCeiling}
           value={maxPrice === "" ? priceCeiling : maxPrice}
-          onChange={(e) => updateParam("maxPrice", e.target.value)}
+          onChange={(e) => update("maxPrice", e.target.value)}
           className="w-full accent-amber-500"
+          aria-label="Maximum price filter"
         />
         <div className="flex justify-between font-mono text-[11px] text-slate-500 mt-1">
           <span>SAR 0</span>
           <span>{fmt(maxPrice === "" ? priceCeiling : Number(maxPrice))}</span>
         </div>
         {maxPrice !== "" && (
-          <button onClick={() => updateParam("maxPrice", "")} className="font-mono text-[11px] text-amber-600 mt-2">Clear price filter</button>
+          <button
+            onClick={() => update("maxPrice", "")}
+            className="font-mono text-[11px] text-amber-600 hover:text-amber-500 mt-2"
+          >
+            Clear price filter
+          </button>
         )}
       </div>
 
-      <div>
-        <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Search</h4>
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            defaultValue={query}
-            onChange={(e) => updateParam("q", e.target.value)}
-            placeholder="SKU or name"
-            className="w-full bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none pl-8 pr-3 py-2 text-sm font-mono text-slate-700"
-          />
-        </div>
-      </div>
-
+      {/* Sort */}
       <div>
         <h4 className="font-mono text-[11px] uppercase text-slate-500 tracking-wider mb-3">Sort</h4>
         <select
           value={sort}
-          onChange={(e) => updateParam("sort", e.target.value)}
+          onChange={(e) => update("sort", e.target.value)}
           className="w-full bg-white border border-slate-300 text-sm text-slate-700 px-3 py-2 font-mono"
+          aria-label="Sort products"
         >
           <option value="default">Default</option>
           <option value="price-asc">Price: Low to High</option>
@@ -86,6 +177,7 @@ export default function ShopFilters({ priceCeiling }) {
           <option value="name-asc">Name: A–Z</option>
         </select>
       </div>
+
     </aside>
   );
 }
