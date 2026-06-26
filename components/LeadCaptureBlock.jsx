@@ -38,8 +38,8 @@ export default function LeadCaptureBlock() {
         ) : (
           <form ref={formRef} action={handleSubmit} className="flex flex-col gap-2 w-full sm:w-auto flex-shrink-0">
             <div className="flex flex-col sm:flex-row gap-2">
-              <input name="email" type="email" placeholder="Email address" className="bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700 sm:w-52" />
-              <input name="phone" type="tel" placeholder="Phone number" className="bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700 sm:w-44" />
+              <input name="email" type="email" placeholder="Email address" aria-label="Email address" className="bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700 sm:w-52" />
+              <input name="phone" type="tel" placeholder="Phone number" aria-label="Phone number" className="bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700 sm:w-44" />
               <button disabled={status === "saving"} className="bg-amber-500 disabled:bg-slate-300 hover:bg-amber-400 text-slate-950 font-mono uppercase text-xs tracking-wider px-5 py-2.5 flex items-center justify-center gap-1.5 whitespace-nowrap">
                 {status === "saving" ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />} Notify Me
               </button>
