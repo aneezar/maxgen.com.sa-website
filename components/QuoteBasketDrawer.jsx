@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Minus, ChevronRight, ClipboardList, CheckCircle2, ArrowLeft } from "lucide-react";
+import { X, Plus, Minus, ChevronRight, ClipboardList, CheckCircle2, ArrowLeft, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { useQuote } from "./QuoteContext";
 import { fmt } from "@/lib/constants";
 import RFQForm from "./RFQForm";
 import WhatsAppQuoteButton from "./WhatsAppQuoteButton";
 
 export default function QuoteBasketDrawer({ open, onClose }) {
-  const { quote, inc, dec, remove, subtotal, itemCount } = useQuote();
+  const { quote, inc, dec, remove, subtotal, itemCount, addToHistory } = useQuote();
   const [step, setStep] = useState("basket");
   const [refId, setRefId] = useState(null);
 
@@ -18,6 +19,7 @@ export default function QuoteBasketDrawer({ open, onClose }) {
   };
 
   const handleSuccess = (id) => {
+    addToHistory(id);
     setRefId(id);
     setStep("success");
   };
@@ -66,12 +68,21 @@ export default function QuoteBasketDrawer({ open, onClose }) {
             <p className="text-slate-500 text-sm max-w-xs leading-relaxed">
               Our team will review your request and respond within 24 hours.
             </p>
-            <button
-              onClick={handleClose}
-              className="mt-2 font-mono text-xs uppercase text-amber-600 hover:text-amber-500"
-            >
-              Close
-            </button>
+            <div className="flex items-center gap-4 mt-2">
+              <button
+                onClick={handleClose}
+                className="font-mono text-xs uppercase text-slate-400 hover:text-slate-600"
+              >
+                Close
+              </button>
+              <Link
+                href="/my-quotes"
+                onClick={handleClose}
+                className="font-mono text-xs uppercase text-amber-600 hover:text-amber-500 flex items-center gap-1"
+              >
+                View My Quotes <ExternalLink size={11} />
+              </Link>
+            </div>
           </div>
         )}
 

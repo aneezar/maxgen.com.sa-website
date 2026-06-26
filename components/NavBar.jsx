@@ -10,6 +10,7 @@ import { fmt } from "@/lib/constants";
 const mainLinks = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
+  { href: "/my-quotes", label: "My Quotes" },
   { href: "/verticals", label: "Verticals" },
 ];
 
