@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import NavBar from "./NavBar";
-import CartDrawer from "./CartDrawer";
+import QuoteBasketDrawer from "./QuoteBasketDrawer";
 import Footer from "./Footer";
-import { CartProvider } from "./CartContext";
+import { QuoteProvider } from "./QuoteContext";
 
 export default function SiteChrome({ content, children }) {
-  const [cartOpen, setCartOpen] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
   return (
-    <CartProvider>
-      <NavBar onCartClick={() => setCartOpen(true)} />
+    <QuoteProvider>
+      <NavBar onCartClick={() => setQuoteOpen(true)} />
 
       <div className="border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-5 py-1.5 flex items-center justify-between font-mono text-[10px] text-slate-500 uppercase tracking-widest">
@@ -23,7 +23,7 @@ export default function SiteChrome({ content, children }) {
       {children}
 
       <Footer content={content} />
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
-    </CartProvider>
+      <QuoteBasketDrawer open={quoteOpen} onClose={() => setQuoteOpen(false)} />
+    </QuoteProvider>
   );
 }

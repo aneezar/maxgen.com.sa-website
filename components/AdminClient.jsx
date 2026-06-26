@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   Lock, Pencil, Trash2, Save, PackagePlus, Inbox, ClipboardList, ImageOff, UserPlus,
-  Building2, Briefcase, Search, Loader2, CheckCircle2, Upload,
+  Building2, Briefcase, Search, Loader2, CheckCircle2, Upload, FileText,
 } from "lucide-react";
 import { ProductImg, StatusDot } from "./UI";
 import { CATEGORIES, fmt } from "@/lib/constants";
@@ -13,6 +13,7 @@ import {
   adminSaveService, adminDeleteService,
   adminSaveContent,
 } from "@/lib/actions";
+import QuoteAdminPanel from "./QuoteAdminPanel";
 
 const ADMIN_PIN = "4490"; // change this before publishing
 
@@ -74,7 +75,7 @@ function ImageUploadField({ value, onChange, label }) {
   );
 }
 
-export default function AdminClient({ initialProducts, initialServices, initialContent, initialOrders, initialLeads, initialMessages, initialApplications }) {
+export default function AdminClient({ initialProducts, initialServices, initialContent, initialOrders, initialLeads, initialMessages, initialApplications, initialQuotes }) {
   const [authed, setAuthed] = useState(false);
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
@@ -87,6 +88,7 @@ export default function AdminClient({ initialProducts, initialServices, initialC
   const [leads] = useState(initialLeads);
   const [messages] = useState(initialMessages);
   const [applications] = useState(initialApplications);
+  const [quotes, setQuotes] = useState(initialQuotes || []);
 
   const checkPin = (e) => {
     e.preventDefault();
@@ -125,6 +127,7 @@ export default function AdminClient({ initialProducts, initialServices, initialC
         </div>
         <div className="flex gap-2 flex-wrap">
           {[
+            { id: "quotes", label: `Quotes${quotes.filter(q => q.status === "pending").length > 0 ? ` (${quotes.filter(q => q.status === "pending").length} new)` : ""}`, icon: FileText },
             { id: "products", label: "Products", icon: PackagePlus },
             { id: "verticals", label: "Verticals", icon: Building2 },
             { id: "content", label: "Content", icon: Pencil },
@@ -143,6 +146,7 @@ export default function AdminClient({ initialProducts, initialServices, initialC
         </div>
       </div>
 
+      {tab === "quotes" && <QuoteAdminPanel quotes={quotes} setQuotes={setQuotes} />}
       {tab === "products" && (
         <ProductsTab products={products} setProducts={setProducts} />
       )}

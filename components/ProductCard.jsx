@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Eye, Star } from "lucide-react";
 import { ProductImg, StatusDot } from "@/components/UI";
 import { imgixUrl } from "@/lib/imgix";
-import AddToCartButton from "@/components/AddToCartButton";
+import AddToQuoteButton from "@/components/AddToQuoteButton";
 import { fmt } from "@/lib/constants";
 
 export default function ProductCard({ product: p, quickViewHref }) {
@@ -76,7 +76,7 @@ export default function ProductCard({ product: p, quickViewHref }) {
           <span className="font-mono text-lg text-amber-600 font-medium truncate">{fmt(p.price)}</span>
           <span className="font-mono text-[10px] text-slate-500">{p.stock} units</span>
         </div>
-        <AddToCartButton product={p} />
+        <AddToQuoteButton product={p} />
       </div>
     </div>
   );

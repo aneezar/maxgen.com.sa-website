@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ChevronRight, Truck, BadgeCheck, Wrench, Star } from "lucide-react";
 import { ProductImg, StatusDot } from "@/components/UI";
 import { imgixUrl } from "@/lib/imgix";
-import AddToCartButton from "@/components/AddToCartButton";
+import AddToQuoteButton from "@/components/AddToQuoteButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { getProductById, getProducts } from "@/lib/db";
 import { CATEGORIES, fmt, SITE_URL } from "@/lib/constants";
@@ -128,7 +128,7 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
           </p>
 
           <div className="flex flex-col gap-3">
-            <AddToCartButton
+            <AddToQuoteButton
               product={product}
               compact={false}
               className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono uppercase text-sm tracking-wider py-3.5 flex items-center justify-center gap-2 transition-colors"

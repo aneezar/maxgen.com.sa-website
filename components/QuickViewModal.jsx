@@ -6,7 +6,7 @@ import Link from "next/link";
 import { X, ExternalLink } from "lucide-react";
 import { ProductImg, StatusDot } from "@/components/UI";
 import { imgixUrl } from "@/lib/imgix";
-import AddToCartButton from "@/components/AddToCartButton";
+import AddToQuoteButton from "@/components/AddToQuoteButton";
 import { fmt } from "@/lib/constants";
 
 export default function QuickViewModal({ product: p, closeHref }) {
@@ -78,7 +78,7 @@ export default function QuickViewModal({ product: p, closeHref }) {
             <p className="font-mono text-2xl text-amber-600 font-semibold mb-0.5">{fmt(p.price)}</p>
             <p className="text-slate-400 text-xs mb-5">{p.stock} units in stock</p>
 
-            <AddToCartButton
+            <AddToQuoteButton
               product={p}
               compact={false}
               className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono uppercase text-sm tracking-wider py-3 flex items-center justify-center gap-2 mb-3 transition-colors"

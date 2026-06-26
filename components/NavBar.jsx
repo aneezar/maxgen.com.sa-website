@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Menu, ChevronRight } from "lucide-react";
+import { ClipboardList, Menu, ChevronRight } from "lucide-react";
 import Logo from "./Logo";
-import { useCart } from "./CartContext";
+import { useQuote } from "./QuoteContext";
 import { fmt } from "@/lib/constants";
 
 const mainLinks = [
@@ -28,7 +28,7 @@ const tailLinks = [
 export default function NavBar({ onCartClick }) {
   const [open, setOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
-  const { itemCount, total } = useCart();
+  const { itemCount, subtotal } = useQuote();
 
   return (
     <div className="border-b border-slate-200 bg-white/95 sticky top-0 z-40 backdrop-blur">
@@ -66,9 +66,9 @@ export default function NavBar({ onCartClick }) {
 
         <div className="flex items-center gap-2">
           <button onClick={onCartClick} className="flex items-center gap-2 border border-slate-300 hover:border-amber-500 px-3 py-2 transition-colors">
-            <ShoppingCart size={16} className="text-amber-600" />
+            <ClipboardList size={16} className="text-amber-600" />
             <span className="font-mono text-xs">{itemCount}</span>
-            <span className="font-mono text-xs text-amber-600 hidden sm:inline">{fmt(total)}</span>
+            <span className="font-mono text-xs text-amber-600 hidden sm:inline">{itemCount > 0 ? fmt(subtotal) : "Quote"}</span>
           </button>
           <button className="md:hidden text-slate-500" onClick={() => setOpen((v) => !v)}>
             <Menu size={20} />
