@@ -4,7 +4,13 @@ import { useState, useRef } from "react";
 import { Upload, FileText, X, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
-const ACCEPTED = [".xlsx", ".xls", ".pdf", ".csv"];
+const ACCEPTED_EXTENSIONS = [".xlsx", ".xls", ".pdf", ".csv"];
+const ACCEPTED_MIME = [
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.ms-excel",                                          // .xls
+  "application/pdf",                                                    // .pdf
+  "text/csv", "application/csv",                                       // .csv
+];
 const MAX_MB = 10;
 
 export default function BOQUpload({ value, onChange }) {
@@ -18,8 +24,12 @@ export default function BOQUpload({ value, onChange }) {
     setError("");
 
     const ext = "." + file.name.split(".").pop().toLowerCase();
-    if (!ACCEPTED.includes(ext)) {
-      setError(`Unsupported type. Accepted: ${ACCEPTED.join(", ")}`);
+    if (!ACCEPTED_EXTENSIONS.includes(ext)) {
+      setError(`Unsupported type. Accepted: ${ACCEPTED_EXTENSIONS.join(", ")}`);
+      return;
+    }
+    if (file.type && !ACCEPTED_MIME.includes(file.type)) {
+      setError(`Unsupported file format. Accepted: Excel, PDF, CSV.`);
       return;
     }
     if (file.size > MAX_MB * 1024 * 1024) {
@@ -29,7 +39,7 @@ export default function BOQUpload({ value, onChange }) {
 
     setUploading(true);
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const path = `${Date.now()}-${safeName}`;
+    const path = `${crypto.randomUUID()}-${safeName}`;
 
     const { data, error: uploadError } = await supabase.storage
       .from("boq-uploads")
