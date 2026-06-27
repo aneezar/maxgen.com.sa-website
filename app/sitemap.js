@@ -16,14 +16,14 @@ export default async function sitemap() {
 
   const productRoutes = products.map((p) => ({
     url: `${SITE_URL}/shop/${p.id}`,
-    lastModified: new Date(),
+    lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
     changeFrequency: "weekly",
     priority: 0.6,
   }));
 
   const serviceRoutes = services.map((s) => ({
     url: `${SITE_URL}/verticals/${s.slug}`,
-    lastModified: new Date(),
+    lastModified: s.updated_at ? new Date(s.updated_at) : new Date(),
     changeFrequency: "monthly",
     priority: 0.7,
   }));

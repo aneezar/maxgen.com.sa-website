@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { X, ExternalLink } from "lucide-react";
 import { ProductImg, StatusDot } from "@/components/UI";
@@ -9,18 +9,44 @@ import { imgixUrl } from "@/lib/imgix";
 import AddToQuoteButton from "@/components/AddToQuoteButton";
 import { fmt } from "@/lib/constants";
 
+const FOCUSABLE = 'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])';
+
 export default function QuickViewModal({ product: p, closeHref }) {
   const router = useRouter();
+  const panelRef = useRef(null);
 
   const close = () => router.push(closeHref, { scroll: false });
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    const onKey = (e) => { if (e.key === "Escape") router.push(closeHref, { scroll: false }); };
+    const previouslyFocused = document.activeElement;
+
+    // Move focus into modal on open
+    const focusable = panelRef.current?.querySelectorAll(FOCUSABLE);
+    if (focusable?.length) focusable[0].focus();
+
+    const onKey = (e) => {
+      if (e.key === "Escape") { router.push(closeHref, { scroll: false }); return; }
+      if (e.key === "Tab" && panelRef.current) {
+        const els = [...panelRef.current.querySelectorAll(FOCUSABLE)];
+        if (!els.length) { e.preventDefault(); return; }
+        const first = els[0];
+        const last = els[els.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
     document.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKey);
+      previouslyFocused?.focus();
     };
   }, [router, closeHref]);
 
@@ -36,7 +62,7 @@ export default function QuickViewModal({ product: p, closeHref }) {
       />
 
       {/* Panel */}
-      <div className="relative bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div ref={panelRef} className="relative bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl">
         <button
           onClick={close}
           className="absolute top-3 right-3 z-10 p-1.5 bg-white/90 hover:bg-slate-100 border border-slate-200 transition-colors"

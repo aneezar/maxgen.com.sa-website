@@ -20,6 +20,10 @@ export async function generateMetadata({ params: paramsPromise }) {
   const params = await paramsPromise;
   const product = await getProductById(params.id);
   if (!product) return {};
+  const ogImage =
+    product.image && !product.image.startsWith("data:")
+      ? imgixUrl(product.image, { w: 1200, h: 630, fit: "crop", q: 85 })
+      : null;
   return {
     title: product.name,
     description: `${product.name} — ${product.spec}. ${fmt(product.price)}. In stock, ships in 2–4 working days from Maxgen.`,
@@ -27,10 +31,9 @@ export async function generateMetadata({ params: paramsPromise }) {
     openGraph: {
       title: product.name,
       description: product.spec,
-      images: product.image && !product.image.startsWith("data:")
-        ? [{ url: product.image }]
-        : [],
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: product.name }] : [],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -64,11 +67,28 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
     },
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` },
+      ...(category
+        ? [{ "@type": "ListItem", position: 3, name: category.label, item: `${SITE_URL}/shop?cat=${product.cat}` }]
+        : []),
+      { "@type": "ListItem", position: category ? 4 : 3, name: product.name, item: `${SITE_URL}/shop/${product.id}` },
+    ],
+  };
+
   return (
     <section className="max-w-7xl mx-auto px-5 py-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Breadcrumb */}
@@ -100,6 +120,7 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
             src={heroImg}
             alt={product.name}
             className="w-full h-80 sm:h-[420px] border border-slate-200"
+            loading="eager"
           />
         </div>
 

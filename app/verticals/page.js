@@ -3,6 +3,7 @@ import { Building2, Globe2, ChevronRight } from "lucide-react";
 import { ProductImg } from "@/components/UI";
 import { getServicesGrouped } from "@/lib/db";
 import { CLIENTS } from "@/lib/constants";
+import { imgixUrl } from "@/lib/imgix";
 
 export const metadata = {
   title: "Verticals — Low Current, ELV, Telecom & MEP Services",
@@ -33,7 +34,7 @@ export default async function VerticalsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {div.items.map((s) => (
               <Link key={s.slug} href={`/verticals/${s.slug}`} className="text-left border border-slate-200 bg-white hover:border-amber-500 shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col">
-                <ProductImg src={s.image} alt={s.title} className="w-full h-36" />
+                <ProductImg src={imgixUrl(s.image, { w: 600, h: 360, q: 75 })} alt={s.title} className="w-full h-36" />
                 <div className="px-5 py-5 flex-1">
                   {s.category && <p className="font-mono text-[10px] uppercase tracking-widest text-amber-600 mb-1.5">{s.category}</p>}
                   <h3 className="text-slate-900 font-semibold mb-1.5 text-[15px]">{s.title}</h3>

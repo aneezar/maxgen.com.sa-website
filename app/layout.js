@@ -1,7 +1,24 @@
 import "./globals.css";
+import { Inter, Barlow_Condensed } from "next/font/google";
 import SiteChrome from "@/components/SiteChrome";
 import { getContent } from "@/lib/db";
 import { SITE_URL } from "@/lib/constants";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const IMGIX_DOMAIN = process.env.NEXT_PUBLIC_IMGIX_DOMAIN;
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -30,7 +47,7 @@ export const metadata = {
     images: [{ url: "/logo-icon.png", width: 256, height: 224, alt: "Maxgen" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Maxgen | Electrical Accessories & ELV Systems",
     description: "Electrical accessories and ELV systems supplier across India, Saudi Arabia, the UK, and the USA.",
   },
@@ -61,7 +78,13 @@ export default async function RootLayout({ children }) {
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${barlowCondensed.variable}`}>
+      <head>
+        {IMGIX_DOMAIN && (
+          <link rel="preconnect" href={`https://${IMGIX_DOMAIN}`} crossOrigin="anonymous" />
+        )}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+      </head>
       <body>
         <script
           type="application/ld+json"

@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { ProductImg } from "@/components/UI";
 import { getServiceBySlug, getServices } from "@/lib/db";
 import { SITE_URL } from "@/lib/constants";
+import { imgixUrl } from "@/lib/imgix";
 
 export const revalidate = 3600;
 // Explicitly allow on-demand rendering for slugs not yet in
@@ -19,6 +20,9 @@ export async function generateMetadata({ params: paramsPromise }) {
   const params = await paramsPromise;
   const service = await getServiceBySlug(params.slug);
   if (!service) return {};
+  const ogImage = service.image
+    ? imgixUrl(service.image, { w: 1200, h: 630, fit: "crop", q: 85 })
+    : null;
   return {
     title: service.title,
     description: service.description,
@@ -26,8 +30,9 @@ export async function generateMetadata({ params: paramsPromise }) {
     openGraph: {
       title: service.title,
       description: service.description,
-      images: service.image ? [{ url: service.image }] : [],
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: service.title }] : [],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -45,15 +50,28 @@ export default async function ServiceDetailPage({ params: paramsPromise }) {
     areaServed: ["Saudi Arabia", "India", "United Kingdom", "United States"],
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Verticals", item: `${SITE_URL}/verticals` },
+      { "@type": "ListItem", position: 3, name: service.title, item: `${SITE_URL}/verticals/${service.slug}` },
+    ],
+  };
+
+  const heroSrc = imgixUrl(service.image, { w: 900, h: 500, q: 80 });
+
   return (
     <section className="max-w-4xl mx-auto px-5 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       <Link href="/verticals" className="font-mono text-xs uppercase text-amber-600 flex items-center gap-1 mb-6">
         <ChevronRight size={12} className="rotate-180" /> Back to Verticals
       </Link>
 
-      <ProductImg src={service.image} alt={service.title} className="w-full h-64 mb-8" />
+      <ProductImg src={heroSrc} alt={service.title} className="w-full h-64 mb-8" loading="eager" />
 
       <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">
         {service.division}{service.category ? ` · ${service.category}` : ""}

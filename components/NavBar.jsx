@@ -36,15 +36,23 @@ export default function NavBar({ onCartClick }) {
       <div className="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between">
         <Link href="/"><Logo small /></Link>
 
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
           {mainLinks.map((l) => (
             <Link key={l.href} href={l.href} className="px-3 py-2 font-mono text-xs uppercase tracking-wider text-slate-500 hover:text-slate-900 transition-colors">
               {l.label}
             </Link>
           ))}
 
-          <div className="relative" onMouseEnter={() => setCompanyOpen(true)} onMouseLeave={() => setCompanyOpen(false)}>
-            <button className="px-3 py-2 font-mono text-xs uppercase tracking-wider text-slate-500 hover:text-slate-900 flex items-center gap-1">
+          <div
+            className="relative"
+            onMouseEnter={() => setCompanyOpen(true)}
+            onMouseLeave={() => setCompanyOpen(false)}
+          >
+            <button
+              aria-expanded={companyOpen}
+              aria-haspopup="true"
+              className="px-3 py-2 font-mono text-xs uppercase tracking-wider text-slate-500 hover:text-slate-900 flex items-center gap-1"
+            >
               Company <ChevronRight size={11} className={`transition-transform ${companyOpen ? "rotate-90" : ""}`} />
             </button>
             {companyOpen && (
@@ -66,12 +74,17 @@ export default function NavBar({ onCartClick }) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button onClick={onCartClick} className="flex items-center gap-2 border border-slate-300 hover:border-amber-500 px-3 py-2 transition-colors">
+          <button onClick={onCartClick} className="flex items-center gap-2 border border-slate-300 hover:border-amber-500 px-3 py-2 transition-colors" aria-label="Open quote basket">
             <ClipboardList size={16} className="text-amber-600" />
             <span className="font-mono text-xs">{itemCount}</span>
             <span className="font-mono text-xs text-amber-600 hidden sm:inline">{itemCount > 0 ? fmt(subtotal) : "Quote"}</span>
           </button>
-          <button className="md:hidden text-slate-500" onClick={() => setOpen((v) => !v)}>
+          <button
+            className="md:hidden text-slate-500"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+          >
             <Menu size={20} />
           </button>
         </div>

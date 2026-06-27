@@ -10,6 +10,7 @@ import { ProductImg, StatusDot } from "@/components/UI";
 import LeadCaptureBlock from "@/components/LeadCaptureBlock";
 import { getProducts, getContent } from "@/lib/db";
 import { CATEGORIES, PARTNERS, fmt } from "@/lib/constants";
+import { imgixUrl } from "@/lib/imgix";
 
 export const metadata = {
   title: "Maxgen | Electrical Accessories & ELV Systems — Saudi Arabia",
@@ -268,7 +269,7 @@ export default async function HomePage() {
               href={`/shop/${p.id}`}
               className="text-left border border-slate-200 bg-white shadow-sm hover:shadow-lg hover:border-amber-500 transition-all flex flex-col group"
             >
-              <ProductImg src={p.image} alt={p.name} className="w-full h-40" />
+              <ProductImg src={imgixUrl(p.image, { w: 400, h: 300, q: 75 })} alt={p.name} className="w-full h-40" />
               <div className="px-4 py-4 flex flex-col flex-1">
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-mono text-[10px] text-slate-400">{p.id}</span>

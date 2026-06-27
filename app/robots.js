@@ -3,7 +3,7 @@ import { SITE_URL } from "@/lib/constants";
 export default function robots() {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/admin"] },
+      { userAgent: "*", allow: "/", disallow: ["/admin", "/api/export/"] },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
