@@ -13,7 +13,7 @@ export default function CareerPage() {
       <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Careers</p>
       <h1 className="text-4xl font-bold text-slate-900 mb-4 font-display">Build with us.</h1>
       <p className="text-slate-500 text-[15px] max-w-2xl mb-10">
-        We're hiring across engineering, sales, and operations. Open roles below — tap one to apply.
+        We&apos;re hiring across engineering, sales, and operations. Open roles below — tap one to apply.
       </p>
       <CareerClient roles={CAREERS} />
     </section>

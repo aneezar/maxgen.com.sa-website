@@ -96,6 +96,7 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="relative border-b border-slate-200 overflow-hidden">
         <div className="absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1800&q=80&auto=format&fit=crop"
             alt="Electrical and ELV systems installation"

@@ -33,7 +33,7 @@ export default function LeadCaptureBlock() {
 
         {status === "sent" ? (
           <div className="flex items-center gap-2 text-emerald-600 font-medium flex-shrink-0">
-            <CheckCircle2 size={20} /> Thanks — we'll be in touch.
+            <CheckCircle2 size={20} /> Thanks — we&apos;ll be in touch.
           </div>
         ) : (
           <form ref={formRef} action={handleSubmit} className="flex flex-col gap-2 w-full sm:w-auto flex-shrink-0">

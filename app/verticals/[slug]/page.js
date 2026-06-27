@@ -81,7 +81,7 @@ export default async function ServiceDetailPage({ params: paramsPromise }) {
       <p className="text-slate-500 text-[15px] leading-relaxed">{service.detail}</p>
 
       <div className="mt-10 border border-slate-200 bg-slate-50 px-6 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <p className="text-slate-500 text-sm">Need this for a project or site? Get in touch and we'll scope it.</p>
+        <p className="text-slate-500 text-sm">Need this for a project or site? Get in touch and we&apos;ll scope it.</p>
         <Link href="/contact" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono uppercase text-xs tracking-wider px-4 py-2.5 flex items-center gap-1.5 flex-shrink-0">
           Request Quote <ChevronRight size={13} />
         </Link>

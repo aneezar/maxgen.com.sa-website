@@ -27,7 +27,7 @@ export default function ContactForm() {
       <div className="border border-emerald-200 bg-emerald-50 px-5 py-8 flex flex-col items-center text-center gap-3">
         <CheckCircle2 className="text-emerald-600" size={32} />
         <p className="text-slate-900 font-medium">Message sent.</p>
-        <p className="text-slate-500 text-sm">We'll get back to you shortly.</p>
+        <p className="text-slate-500 text-sm">We&apos;ll get back to you shortly.</p>
         <button onClick={() => setStatus("idle")} className="font-mono text-xs uppercase text-amber-600 mt-2">Send another</button>
       </div>
     );

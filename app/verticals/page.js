@@ -55,7 +55,7 @@ export default async function VerticalsPage() {
       </div>
 
       <div>
-        <h2 className="font-mono text-amber-600 text-xs uppercase tracking-widest mb-4 pb-2 border-b border-slate-200">Clients We've Worked With</h2>
+        <h2 className="font-mono text-amber-600 text-xs uppercase tracking-widest mb-4 pb-2 border-b border-slate-200">Clients We&apos;ve Worked With</h2>
         <div className="flex flex-wrap gap-2">
           {CLIENTS.map((c) => (
             <span key={c} className="border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-500 text-xs font-mono">{c}</span>

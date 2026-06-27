@@ -45,7 +45,7 @@ export default function CareerClient({ roles }) {
 
               {status === "sent" ? (
                 <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium">
-                  <CheckCircle2 size={16} /> Application received — we'll be in touch.
+                  <CheckCircle2 size={16} /> Application received — we&apos;ll be in touch.
                 </div>
               ) : (
                 <form action={(fd) => handleSubmit(fd, role.title)} className="flex flex-col sm:flex-row gap-2">

@@ -17,7 +17,7 @@ export default async function CustomersPage() {
       <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Major Customers</p>
       <h1 className="text-4xl font-bold text-slate-900 mb-4 font-display">Trusted across banking, hospitality, and infrastructure.</h1>
       <p className="text-slate-500 text-[15px] max-w-2xl mb-10">
-        A selection of clients we've supplied and supported across multiple project types and sectors.
+        A selection of clients we&apos;ve supplied and supported across multiple project types and sectors.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">

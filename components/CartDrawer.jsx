@@ -50,7 +50,7 @@ export default function CartDrawer({ open, onClose }) {
             <CheckCircle2 className="text-emerald-500" size={36} />
             <p className="text-slate-900 font-medium text-lg">Order placed.</p>
             <p className="font-mono text-amber-600 text-sm">{placedId}</p>
-            <p className="text-slate-500 text-sm">We'll confirm by phone.</p>
+            <p className="text-slate-500 text-sm">We&apos;ll confirm by phone.</p>
             <button onClick={() => { onClose(); setPlacedId(null); }} className="font-mono text-xs uppercase text-amber-600 mt-3">Close</button>
           </div>
         ) : (
