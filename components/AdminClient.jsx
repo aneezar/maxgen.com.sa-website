@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   Lock, Pencil, Trash2, Save, PackagePlus, Inbox, ClipboardList, ImageOff, UserPlus,
-  Building2, Briefcase, Search, Loader2, CheckCircle2, Upload, FileText,
+  Building2, Briefcase, Search, Loader2, CheckCircle2, Upload, FileText, BarChart3,
 } from "lucide-react";
 import { ProductImg, StatusDot } from "./UI";
 import { CATEGORIES, fmt } from "@/lib/constants";
@@ -14,6 +14,7 @@ import {
   adminSaveContent,
 } from "@/lib/actions";
 import QuoteAdminPanel from "./QuoteAdminPanel";
+import AnalyticsTab from "./AnalyticsTab";
 
 const ADMIN_PIN = "4490"; // change this before publishing
 
@@ -75,11 +76,11 @@ function ImageUploadField({ value, onChange, label }) {
   );
 }
 
-export default function AdminClient({ initialProducts, initialServices, initialContent, initialOrders, initialLeads, initialMessages, initialApplications, initialQuotes }) {
+export default function AdminClient({ initialProducts, initialServices, initialContent, initialOrders, initialLeads, initialMessages, initialApplications, initialQuotes, initialCustomers = [], initialPartners = [] }) {
   const [authed, setAuthed] = useState(false);
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
-  const [tab, setTab] = useState("products");
+  const [tab, setTab] = useState("analytics");
 
   const [products, setProducts] = useState(initialProducts);
   const [services, setServices] = useState(initialServices);
@@ -89,6 +90,8 @@ export default function AdminClient({ initialProducts, initialServices, initialC
   const [messages] = useState(initialMessages);
   const [applications] = useState(initialApplications);
   const [quotes, setQuotes] = useState(initialQuotes || []);
+  const [customers] = useState(initialCustomers);
+  const [partners] = useState(initialPartners);
 
   const checkPin = (e) => {
     e.preventDefault();
@@ -127,6 +130,7 @@ export default function AdminClient({ initialProducts, initialServices, initialC
         </div>
         <div className="flex gap-2 flex-wrap">
           {[
+            { id: "analytics", label: "Analytics", icon: BarChart3 },
             { id: "quotes", label: `Quotes${quotes.filter(q => q.status === "pending").length > 0 ? ` (${quotes.filter(q => q.status === "pending").length} new)` : ""}`, icon: FileText },
             { id: "products", label: "Products", icon: PackagePlus },
             { id: "verticals", label: "Verticals", icon: Building2 },
@@ -146,6 +150,7 @@ export default function AdminClient({ initialProducts, initialServices, initialC
         </div>
       </div>
 
+      {tab === "analytics" && <AnalyticsTab products={products} customers={customers} partners={partners} />}
       {tab === "quotes" && <QuoteAdminPanel quotes={quotes} setQuotes={setQuotes} />}
       {tab === "products" && (
         <ProductsTab products={products} setProducts={setProducts} />

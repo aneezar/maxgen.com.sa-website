@@ -1,5 +1,5 @@
 import AdminClient from "@/components/AdminClient";
-import { getProducts, getServices, getContent, getOrders, getLeads, getMessages, getApplications, getQuotes } from "@/lib/db";
+import { getProducts, getServices, getContent, getOrders, getLeads, getMessages, getApplications, getQuotes, getCustomers, getPartners } from "@/lib/db";
 
 export const metadata = {
   title: "Admin",
@@ -9,7 +9,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const [products, services, content, orders, leads, messages, applications, quotes] = await Promise.all([
+  const [products, services, content, orders, leads, messages, applications, quotes, customers, partners] = await Promise.all([
     getProducts(),
     getServices(),
     getContent(),
@@ -18,6 +18,8 @@ export default async function AdminPage() {
     getMessages(),
     getApplications(),
     getQuotes(),
+    getCustomers(),
+    getPartners(),
   ]);
 
   return (
@@ -30,6 +32,8 @@ export default async function AdminPage() {
       initialMessages={messages}
       initialApplications={applications}
       initialQuotes={quotes}
+      initialCustomers={customers}
+      initialPartners={partners}
     />
   );
 }
