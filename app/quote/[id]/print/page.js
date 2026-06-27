@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getQuoteById } from "@/lib/db";
-import { fmt } from "@/lib/constants";
+import { fmt, COMPANY_EMAIL } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -115,7 +115,7 @@ export default async function QuotePrintPage({ params }) {
               <div style={S.partyLabel}>From</div>
               <div style={S.partyName}>Maxgen Electric Co.</div>
               <div style={S.partySub}>Riyadh, Saudi Arabia</div>
-              <div style={S.partyMono}>support@maxgen.com.sa</div>
+              <div style={S.partyMono}>{COMPANY_EMAIL}</div>
               <div style={S.partyMono}>maxgen.com.sa</div>
             </div>
           </div>
@@ -132,8 +132,8 @@ export default async function QuotePrintPage({ params }) {
               </tr>
             </thead>
             <tbody>
-              {(q.items || []).map((item, idx) => (
-                <tr key={idx}>
+              {(q.items || []).map((item) => (
+                <tr key={item.id}>
                   <td style={S.td}><span style={S.skuCell}>{item.id}</span></td>
                   <td style={S.td}>
                     {item.brand && <div style={S.brandCell}>{item.brand}</div>}
@@ -193,7 +193,7 @@ export default async function QuotePrintPage({ params }) {
               <div>Valid for 30 days from the date of this request.</div>
             </div>
             <div style={S.footerR}>
-              <div>support@maxgen.com.sa</div>
+              <div>{COMPANY_EMAIL}</div>
               <div>maxgen.com.sa</div>
             </div>
           </div>

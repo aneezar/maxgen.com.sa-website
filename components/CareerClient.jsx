@@ -23,10 +23,10 @@ export default function CareerClient({ roles }) {
 
   return (
     <div className="space-y-3">
-      {roles.map((role, i) => (
-        <div key={i} className="border border-slate-200 bg-white shadow-sm">
+      {roles.map((role) => (
+        <div key={role.title} className="border border-slate-200 bg-white shadow-sm">
           <button
-            onClick={() => { setOpenRole(openRole === i ? null : i); setStatus("idle"); setError(""); }}
+            onClick={() => { setOpenRole(openRole === role.title ? null : role.title); setStatus("idle"); setError(""); }}
             className="w-full flex items-center justify-between px-5 py-4 text-left"
           >
             <div className="flex items-center gap-3">
@@ -36,10 +36,10 @@ export default function CareerClient({ roles }) {
                 <p className="font-mono text-[11px] text-slate-500">{role.location} · {role.type}</p>
               </div>
             </div>
-            <ChevronRight size={16} className={`text-slate-400 transition-transform ${openRole === i ? "rotate-90" : ""}`} />
+            <ChevronRight size={16} className={`text-slate-400 transition-transform ${openRole === role.title ? "rotate-90" : ""}`} />
           </button>
 
-          {openRole === i && (
+          {openRole === role.title && (
             <div className="border-t border-slate-200 px-5 py-5">
               <p className="text-slate-500 text-sm mb-5">{role.desc}</p>
 

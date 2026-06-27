@@ -134,7 +134,7 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
                       <a
                         href={`/quote/${q.id}/print`}
                         target="_blank"
-                        rel="noopener"
+                        rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className="p-2 border border-slate-300 text-slate-500 hover:border-amber-500 hover:text-amber-600"
                         title="Download PDF"
@@ -188,8 +188,8 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
                       <div>
                         <p className="font-mono text-[10px] uppercase text-slate-400 mb-2">Line Items</p>
                         <div className="border border-slate-200 divide-y divide-slate-200">
-                          {(q.items || []).map((item, idx) => (
-                            <div key={idx} className="flex items-center justify-between px-3 py-2">
+                          {(q.items || []).map((item) => (
+                            <div key={item.id} className="flex items-center justify-between px-3 py-2">
                               <div className="min-w-0 flex-1">
                                 <p className="font-mono text-[10px] text-slate-400">{item.id}</p>
                                 {item.brand && <p className="font-mono text-[9px] text-amber-700 uppercase">{item.brand}</p>}

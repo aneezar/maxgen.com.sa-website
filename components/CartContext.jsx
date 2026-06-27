@@ -12,7 +12,7 @@ export function CartProvider({ children }) {
     try {
       const raw = localStorage.getItem("maxgen:cart");
       if (raw) setCart(JSON.parse(raw));
-    } catch {}
+    } catch { /* localStorage unavailable (SSR / private-browsing quota) */ }
     setHydrated(true);
   }, []);
 
@@ -20,7 +20,7 @@ export function CartProvider({ children }) {
     if (!hydrated) return;
     try {
       localStorage.setItem("maxgen:cart", JSON.stringify(cart));
-    } catch {}
+    } catch { /* quota exceeded or storage blocked */ }
   }, [cart, hydrated]);
 
   const addToCart = useCallback((product, qty = 1) => {

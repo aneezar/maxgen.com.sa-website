@@ -24,8 +24,8 @@ export default function LeadsTab({ leads }) {
         <p className="text-slate-400 font-mono text-sm text-center py-12">No leads yet.</p>
       ) : (
         <div className="max-h-[600px] overflow-y-auto divide-y divide-slate-200">
-          {leads.map((l, idx) => (
-            <div key={idx} className="flex items-center justify-between px-4 py-3">
+          {leads.map((l) => (
+            <div key={l.id} className="flex items-center justify-between px-4 py-3">
               <div>
                 {l.email && <p className="text-slate-900 text-sm font-medium">{l.email}</p>}
                 {l.phone && <p className="font-mono text-[12px] text-slate-500">{l.phone}</p>}

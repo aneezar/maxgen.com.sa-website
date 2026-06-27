@@ -10,8 +10,8 @@ export default function MessagesTab({ messages }) {
         <p className="text-slate-400 font-mono text-sm text-center py-12">No messages yet.</p>
       ) : (
         <div className="max-h-[600px] overflow-y-auto divide-y divide-slate-200">
-          {messages.map((m, idx) => (
-            <div key={idx} className="px-4 py-4">
+          {messages.map((m) => (
+            <div key={m.id} className="px-4 py-4">
               <div className="flex justify-between items-baseline mb-1">
                 <span className="text-slate-900 text-sm font-medium">{m.name} · {m.phone}</span>
                 <span className="font-mono text-[11px] text-slate-500">{new Date(m.submitted_at).toLocaleString()}</span>

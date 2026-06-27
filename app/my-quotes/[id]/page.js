@@ -48,7 +48,7 @@ export default async function QuoteDetailPage({ params }) {
           <a
             href={`/quote/${q.id}/print`}
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             className="flex items-center gap-1.5 border border-slate-300 hover:border-amber-500 text-slate-500 hover:text-amber-600 font-mono text-xs uppercase tracking-wider px-3 py-2 transition-colors"
           >
             <Printer size={13} /> Download PDF
@@ -66,8 +66,8 @@ export default async function QuoteDetailPage({ params }) {
       <div className="mb-8">
         <h2 className="font-mono text-[11px] uppercase tracking-wider text-slate-500 mb-3">Items Requested</h2>
         <div className="border border-slate-200 divide-y divide-slate-200">
-          {(q.items || []).map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between px-4 py-3 gap-3">
+          {(q.items || []).map((item) => (
+            <div key={item.id} className="flex items-center justify-between px-4 py-3 gap-3">
               <div className="flex-1 min-w-0">
                 <p className="font-mono text-[10px] text-slate-400">{item.id}</p>
                 {item.brand && (

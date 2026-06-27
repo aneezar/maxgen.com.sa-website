@@ -19,8 +19,8 @@ export default function OrdersTab({ orders }) {
                 <span className="font-mono text-[11px] text-slate-500">{new Date(o.placed_at).toLocaleString()}</span>
               </div>
               <ul className="text-slate-500 text-sm space-y-0.5 mb-2">
-                {(o.items || []).map((it, idx) => (
-                  <li key={idx}>{it.qty}× {it.name} <span className="text-slate-400">({fmt(it.price)})</span></li>
+                {(o.items || []).map((it) => (
+                  <li key={it.id}>{it.qty}× {it.name} <span className="text-slate-400">({fmt(it.price)})</span></li>
                 ))}
               </ul>
               <p className="font-mono text-slate-700 text-sm">Total: {fmt(o.grand_total)}</p>

@@ -15,18 +15,18 @@ export function QuoteProvider({ children }) {
       if (raw) setQuote(JSON.parse(raw));
       const hist = localStorage.getItem("maxgen:quote-history");
       if (hist) setQuoteHistory(JSON.parse(hist));
-    } catch {}
+    } catch { /* localStorage unavailable (SSR / private-browsing quota) */ }
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    try { localStorage.setItem("maxgen:quote", JSON.stringify(quote)); } catch {}
+    try { localStorage.setItem("maxgen:quote", JSON.stringify(quote)); } catch { /* quota exceeded or storage blocked */ }
   }, [quote, hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
-    try { localStorage.setItem("maxgen:quote-history", JSON.stringify(quoteHistory)); } catch {}
+    try { localStorage.setItem("maxgen:quote-history", JSON.stringify(quoteHistory)); } catch { /* quota exceeded or storage blocked */ }
   }, [quoteHistory, hydrated]);
 
   const addToQuote = useCallback((product, qty = 1) => {
