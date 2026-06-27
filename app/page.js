@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { ProductImg, StatusDot } from "@/components/UI";
 import LeadCaptureBlock from "@/components/LeadCaptureBlock";
-import { getProducts, getContent } from "@/lib/db";
+import { getProductsFiltered, getContent } from "@/lib/db";
 import { CATEGORIES, PARTNERS, fmt } from "@/lib/constants";
 import { imgixUrl } from "@/lib/imgix";
 
@@ -82,8 +82,14 @@ const STATS = [
 ];
 
 export default async function HomePage() {
-  const [products, content] = await Promise.all([getProducts(), getContent()]);
-  const featured = products.slice(0, 8);
+  const [featuredRaw, content] = await Promise.all([
+    getProductsFiltered({ featured: true }),
+    getContent(),
+  ]);
+  // Fall back to 8 newest products if no items have been marked featured in admin
+  const featured = featuredRaw.length > 0
+    ? featuredRaw.slice(0, 8)
+    : (await getProductsFiltered({})).slice(0, 8);
 
   return (
     <>
