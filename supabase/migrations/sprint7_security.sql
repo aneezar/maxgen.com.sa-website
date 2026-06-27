@@ -28,3 +28,16 @@ drop policy if exists "public write content" on site_content;
 
 -- Quotes status/note updates — admin-only (insert remains public for RFQ submissions)
 drop policy if exists "public update quotes" on quotes;
+
+-- ----------------------------------------------------------------
+-- Lock down reads on internal-only tables.
+-- These are never queried by the browser — only by server-side
+-- code via supabaseAdmin. The corresponding lib/db.js functions
+-- (getMessages, getLeads, getApplications, getOrders) have been
+-- switched to use supabaseAdmin so they continue to work.
+-- quotes read is intentionally kept — /my-quotes needs it.
+-- ----------------------------------------------------------------
+drop policy if exists "public read messages"     on messages;
+drop policy if exists "public read leads"        on leads;
+drop policy if exists "public read applications" on applications;
+drop policy if exists "public read orders"       on orders;
