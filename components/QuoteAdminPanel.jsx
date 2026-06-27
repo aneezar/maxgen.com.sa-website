@@ -112,15 +112,24 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
                       </p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <a
-                        href={`/api/export/${q.id}`}
-                        download
-                        onClick={(e) => e.stopPropagation()}
-                        className="p-2 border border-slate-300 text-slate-500 hover:border-amber-500 hover:text-amber-600"
-                        title="Export CSV"
-                      >
-                        <Download size={14} />
-                      </a>
+                      {q.email ? (
+                        <a
+                          href={`/api/export/${q.id}?email=${encodeURIComponent(q.email)}`}
+                          download
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-2 border border-slate-300 text-slate-500 hover:border-amber-500 hover:text-amber-600"
+                          title="Export CSV"
+                        >
+                          <Download size={14} />
+                        </a>
+                      ) : (
+                        <span
+                          className="p-2 border border-slate-200 text-slate-300 cursor-not-allowed"
+                          title="CSV export requires a quote email address"
+                        >
+                          <Download size={14} />
+                        </span>
+                      )}
                       <a
                         href={`/quote/${q.id}/print`}
                         target="_blank"

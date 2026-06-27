@@ -36,13 +36,15 @@ export default async function QuoteDetailPage({ params }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <a
-            href={`/api/export/${q.id}`}
-            download
-            className="flex items-center gap-1.5 border border-slate-300 hover:border-amber-500 text-slate-500 hover:text-amber-600 font-mono text-xs uppercase tracking-wider px-3 py-2 transition-colors"
-          >
-            <FileText size={13} /> Export CSV
-          </a>
+          {q.email && (
+            <a
+              href={`/api/export/${q.id}?email=${encodeURIComponent(q.email)}`}
+              download
+              className="flex items-center gap-1.5 border border-slate-300 hover:border-amber-500 text-slate-500 hover:text-amber-600 font-mono text-xs uppercase tracking-wider px-3 py-2 transition-colors"
+            >
+              <FileText size={13} /> Export CSV
+            </a>
+          )}
           <a
             href={`/quote/${q.id}/print`}
             target="_blank"

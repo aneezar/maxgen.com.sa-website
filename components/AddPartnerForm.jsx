@@ -3,8 +3,7 @@
 import { useState, useRef } from "react";
 import { Lock, Plus, Loader2, CheckCircle2 } from "lucide-react";
 import { submitPartner } from "@/lib/actions";
-
-const ADMIN_PIN = "4490"; // keep in sync with components/AdminClient.jsx — change before going live
+import { ADMIN_PIN } from "@/lib/auth";
 
 export default function AddPartnerForm() {
   const [unlocked, setUnlocked] = useState(false);

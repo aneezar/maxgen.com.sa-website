@@ -15,8 +15,7 @@ import {
 } from "@/lib/actions";
 import QuoteAdminPanel from "./QuoteAdminPanel";
 import AnalyticsTab from "./AnalyticsTab";
-
-const ADMIN_PIN = "4490"; // change this before publishing
+import { ADMIN_PIN } from "@/lib/auth";
 
 function emptyProduct() {
   return { id: "", cat: CATEGORIES[0].id, name: "", spec: "", price: "", stock: "", status: "active", image: "" };

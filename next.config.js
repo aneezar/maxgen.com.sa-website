@@ -3,6 +3,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
+      // Imgix domain for optimised product images — set NEXT_PUBLIC_IMGIX_DOMAIN in env
+      ...(process.env.NEXT_PUBLIC_IMGIX_DOMAIN
+        ? [{ protocol: "https", hostname: process.env.NEXT_PUBLIC_IMGIX_DOMAIN }]
+        : []),
     ],
   },
   async headers() {
