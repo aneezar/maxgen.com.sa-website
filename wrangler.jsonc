@@ -10,5 +10,9 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "routes": [
+    { "pattern": "maxgen.com.sa", "custom_domain": true },
+    { "pattern": "www.maxgen.com.sa", "custom_domain": true }
+  ]
 }
