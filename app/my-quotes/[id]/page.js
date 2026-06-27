@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, FileText } from "lucide-react";
+import { ChevronRight, FileText, Printer } from "lucide-react";
 import { getQuoteById } from "@/lib/db";
 import { fmt } from "@/lib/constants";
 import QuoteStatusTimeline from "@/components/QuoteStatusTimeline";
@@ -35,13 +35,23 @@ export default async function QuoteDetailPage({ params }) {
             Submitted {new Date(q.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>
-        <a
-          href={`/api/export/${q.id}`}
-          download
-          className="flex items-center gap-1.5 border border-slate-300 hover:border-amber-500 text-slate-500 hover:text-amber-600 font-mono text-xs uppercase tracking-wider px-3 py-2 transition-colors"
-        >
-          <FileText size={13} /> Export CSV
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={`/api/export/${q.id}`}
+            download
+            className="flex items-center gap-1.5 border border-slate-300 hover:border-amber-500 text-slate-500 hover:text-amber-600 font-mono text-xs uppercase tracking-wider px-3 py-2 transition-colors"
+          >
+            <FileText size={13} /> Export CSV
+          </a>
+          <a
+            href={`/quote/${q.id}/print`}
+            target="_blank"
+            rel="noopener"
+            className="flex items-center gap-1.5 border border-slate-300 hover:border-amber-500 text-slate-500 hover:text-amber-600 font-mono text-xs uppercase tracking-wider px-3 py-2 transition-colors"
+          >
+            <Printer size={13} /> Download PDF
+          </a>
+        </div>
       </div>
 
       {/* Status timeline */}

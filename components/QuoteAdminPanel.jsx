@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Download, Loader2, ExternalLink } from "lucide-react";
-import { adminUpdateQuoteStatus } from "@/lib/actions";
+import { ChevronDown, ChevronUp, Download, Loader2, ExternalLink, Printer, Mail, CheckCircle2 } from "lucide-react";
+import { adminUpdateQuoteStatus, adminSendQuoteEmail } from "@/lib/actions";
 import { fmt } from "@/lib/constants";
 
 const STATUS_OPTIONS = ["pending", "reviewed", "quoted", "accepted", "rejected"];
@@ -28,6 +28,7 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
   const [expanded, setExpanded] = useState(null);
   const [updating, setUpdating] = useState(null);
   const [noteEdits, setNoteEdits] = useState({});
+  const [emailStatus, setEmailStatus] = useState({});
 
   const filtered = initialQuotes.filter((q) => filter === "all" || q.status === filter);
 
@@ -54,6 +55,12 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
 
   const handleNoteChange = (id, value) => {
     setNoteEdits((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSendEmail = async (id) => {
+    setEmailStatus((prev) => ({ ...prev, [id]: "sending" }));
+    const result = await adminSendQuoteEmail(id);
+    setEmailStatus((prev) => ({ ...prev, [id]: result.ok ? "sent" : "error" }));
   };
 
   return (
@@ -113,6 +120,16 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
                         title="Export CSV"
                       >
                         <Download size={14} />
+                      </a>
+                      <a
+                        href={`/quote/${q.id}/print`}
+                        target="_blank"
+                        rel="noopener"
+                        onClick={(e) => e.stopPropagation()}
+                        className="p-2 border border-slate-300 text-slate-500 hover:border-amber-500 hover:text-amber-600"
+                        title="Download PDF"
+                      >
+                        <Printer size={14} />
                       </a>
                       {isOpen ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
                     </div>
@@ -179,6 +196,38 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
                           </div>
                         </div>
                       </div>
+
+                      {/* Email Customer */}
+                      {q.email && (
+                        <div className="flex items-center gap-3 flex-wrap border-t border-slate-100 pt-3">
+                          <button
+                            type="button"
+                            disabled={emailStatus[q.id] === "sending" || emailStatus[q.id] === "sent"}
+                            onClick={() => handleSendEmail(q.id)}
+                            className={`flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider px-3 py-1.5 border transition-colors ${
+                              emailStatus[q.id] === "sent"
+                                ? "border-emerald-300 bg-emerald-50 text-emerald-700 cursor-default"
+                                : emailStatus[q.id] === "error"
+                                ? "border-red-300 text-red-600 hover:border-red-500"
+                                : "border-slate-300 text-slate-500 hover:border-amber-500 hover:text-amber-600"
+                            }`}
+                          >
+                            {emailStatus[q.id] === "sending" && <Loader2 size={13} className="animate-spin" />}
+                            {emailStatus[q.id] === "sent" && <CheckCircle2 size={13} />}
+                            {emailStatus[q.id] !== "sending" && emailStatus[q.id] !== "sent" && <Mail size={13} />}
+                            {emailStatus[q.id] === "sent"
+                              ? "Email Sent"
+                              : emailStatus[q.id] === "error"
+                              ? "Send Failed — Retry"
+                              : emailStatus[q.id] === "sending"
+                              ? "Sending…"
+                              : "Email Customer"}
+                          </button>
+                          {emailStatus[q.id] === "sent" && (
+                            <span className="font-mono text-[10px] text-slate-400">→ {q.email}</span>
+                          )}
+                        </div>
+                      )}
 
                       {/* Admin controls */}
                       <div className="space-y-3 border-t border-slate-200 pt-3">
