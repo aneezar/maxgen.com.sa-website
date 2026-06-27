@@ -25,8 +25,9 @@ export default async function ShopPage({ searchParams: searchParamsPromise }) {
   const cat          = searchParams?.cat          || "all";
   const q            = searchParams?.q            || "";
   const sort         = searchParams?.sort         || "default";
-  const maxPrice     = searchParams?.maxPrice     ? Number(searchParams.maxPrice) : null;
-  const page         = Math.max(1, Number(searchParams?.page) || 1);
+  const rawMaxPrice  = searchParams?.maxPrice     ? Number(searchParams.maxPrice) : null;
+  const maxPrice     = rawMaxPrice !== null ? Math.min(Math.max(0, rawMaxPrice), 1_000_000) : null;
+  const rawPage      = Math.max(1, Number(searchParams?.page) || 1);
   const brand        = searchParams?.brand        || "all";
   const featured     = searchParams?.featured     === "true";
   const availability = searchParams?.availability || "";
@@ -40,6 +41,7 @@ export default async function ShopPage({ searchParams: searchParamsPromise }) {
   ]);
 
   const totalPages     = Math.max(1, Math.ceil(products.length / PAGE_SIZE));
+  const page           = Math.min(rawPage, totalPages);
   const pageItems      = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const activeCatLabel = cat === "all" ? "All Items" : (CATEGORIES.find((c) => c.id === cat)?.label ?? "All Items");
 

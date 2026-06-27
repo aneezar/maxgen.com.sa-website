@@ -86,6 +86,12 @@ export default async function RootLayout({ children }) {
         <link rel="preconnect" href="https://images.unsplash.com" />
       </head>
       <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-amber-500 focus:text-slate-950 focus:px-4 focus:py-2 focus:font-mono focus:text-sm"
+        >
+          Skip to content
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

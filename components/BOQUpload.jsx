@@ -106,7 +106,7 @@ export default function BOQUpload({ value, onChange }) {
           <input
             ref={inputRef}
             type="file"
-            accept={ACCEPTED.join(",")}
+            accept={ACCEPTED_EXTENSIONS.join(",")}
             className="hidden"
             onChange={(e) => upload(e.target.files[0])}
           />

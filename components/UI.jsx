@@ -5,10 +5,11 @@ import { ImageOff } from "lucide-react";
 
 export function StatusDot({ status }) {
   const color = status === "low" ? "bg-amber-400" : "bg-emerald-400";
+  const label = status === "low" ? "Low stock" : "In stock";
   return (
-    <span className="relative inline-flex h-2 w-2" aria-hidden="true">
-      <span className={`absolute inline-flex h-full w-full rounded-full ${color} opacity-60 animate-ping`} />
-      <span className={`relative inline-flex h-2 w-2 rounded-full ${color}`} />
+    <span role="img" aria-label={label} className="relative inline-flex h-2 w-2">
+      <span className={`absolute inline-flex h-full w-full rounded-full ${color} opacity-60 animate-ping`} aria-hidden="true" />
+      <span className={`relative inline-flex h-2 w-2 rounded-full ${color}`} aria-hidden="true" />
     </span>
   );
 }

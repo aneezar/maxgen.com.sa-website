@@ -20,7 +20,7 @@ export default function SiteChrome({ content, children }) {
         </div>
       </div>
 
-      {children}
+      <main id="main-content">{children}</main>
 
       <Footer content={content} />
       <QuoteBasketDrawer open={quoteOpen} onClose={() => setQuoteOpen(false)} />

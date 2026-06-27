@@ -119,8 +119,9 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
                           onClick={(e) => e.stopPropagation()}
                           className="p-2 border border-slate-300 text-slate-500 hover:border-amber-500 hover:text-amber-600"
                           title="Export CSV"
+                          aria-label="Export quote as CSV"
                         >
-                          <Download size={14} />
+                          <Download size={14} aria-hidden="true" />
                         </a>
                       ) : (
                         <span
@@ -137,8 +138,9 @@ export default function QuoteAdminPanel({ quotes: initialQuotes, setQuotes }) {
                         onClick={(e) => e.stopPropagation()}
                         className="p-2 border border-slate-300 text-slate-500 hover:border-amber-500 hover:text-amber-600"
                         title="Download PDF"
+                        aria-label="Print / download PDF"
                       >
-                        <Printer size={14} />
+                        <Printer size={14} aria-hidden="true" />
                       </a>
                       {isOpen ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
                     </div>
