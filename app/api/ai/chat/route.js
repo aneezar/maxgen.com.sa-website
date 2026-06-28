@@ -1,7 +1,5 @@
 import { aiStream, MAXGEN_SYSTEM } from "@/lib/ai";
 
-export const runtime = "edge";
-
 export async function POST(request) {
   if (!process.env.ANTHROPIC_API_KEY) {
     return new Response(JSON.stringify({ error: "AI not configured." }), {

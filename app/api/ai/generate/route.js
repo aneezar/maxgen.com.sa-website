@@ -1,7 +1,5 @@
 import { aiGenerate, MAXGEN_SYSTEM, AI_MODEL_FULL } from "@/lib/ai";
 
-export const runtime = "edge";
-
 const ALLOWED_TYPES = ["proposal", "boq", "submittal", "recommend", "compare", "search", "summary"];
 
 const PROMPTS = {
