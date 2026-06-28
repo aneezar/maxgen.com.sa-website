@@ -166,7 +166,7 @@ export default async function HomePage() {
               <Link
                 key={c.id}
                 href={`/shop?cat=${c.id}`}
-                className="flex flex-col items-center gap-2.5 text-center border border-slate-100 bg-white hover:border-amber-500 hover:shadow-md transition-all px-3 py-6 group shadow-[0_2px_8px_rgba(0,0,0,0.07)] sm:shadow-none sm:border-slate-200"
+                className="flex flex-col items-center gap-2.5 text-center border border-slate-200 bg-white hover:border-amber-500 hover:shadow-md transition-all px-3 py-6 group shadow-sm"
               >
                 <div className="w-11 h-11 rounded-full bg-amber-50 group-hover:bg-amber-100 flex items-center justify-center transition-colors">
                   <Icon size={19} className="text-amber-600" />
@@ -192,7 +192,7 @@ export default async function HomePage() {
             {WHY_CHOOSE.map((item) => (
               <div
                 key={item.title}
-                className="bg-white border border-slate-200 px-6 py-7 flex flex-col gap-3 hover:border-amber-300 hover:shadow-sm transition-all"
+                className="bg-white border border-slate-200 shadow-sm px-6 py-7 flex flex-col gap-3 hover:border-amber-300 hover:shadow-md transition-all"
               >
                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
                   <item.icon size={18} className="text-amber-600" />
@@ -224,7 +224,7 @@ export default async function HomePage() {
             {INDUSTRIES.map((ind) => (
               <div
                 key={ind.label}
-                className="flex items-center gap-3 border border-slate-200 bg-white px-4 py-5 hover:border-amber-300 transition-colors"
+                className="flex items-center gap-3 border border-slate-200 bg-white shadow-sm px-4 py-5 hover:border-amber-300 hover:shadow-md transition-all"
               >
                 <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
                   <ind.icon size={16} className="text-slate-600" />
@@ -246,7 +246,7 @@ export default async function HomePage() {
             {PARTNERS.map((p) => (
               <div
                 key={p.name}
-                className="border border-slate-200 bg-white px-5 py-3.5 flex flex-col items-center gap-0.5 min-w-[130px] hover:border-amber-300 hover:shadow-sm transition-all"
+                className="border border-slate-200 bg-white shadow-sm px-5 py-3.5 flex flex-col items-center gap-0.5 min-w-[130px] hover:border-amber-300 hover:shadow-md transition-all"
               >
                 <span className="font-semibold text-slate-800 text-sm">{p.name}</span>
                 <span className="font-mono text-[9px] uppercase tracking-widest text-slate-400">
