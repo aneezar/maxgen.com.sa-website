@@ -22,6 +22,8 @@ export default function Footer({ content }) {
             <Link href="/customers" className="text-left text-slate-400 hover:text-white">Major Customers</Link>
             <Link href="/partners" className="text-left text-slate-400 hover:text-white">Partners</Link>
             <Link href="/career" className="text-left text-slate-400 hover:text-white">Career</Link>
+            <Link href="/blog" className="text-left text-slate-400 hover:text-white">Blog &amp; News</Link>
+            <Link href="/ai-tools" className="text-left text-slate-400 hover:text-white">AI Tools</Link>
             <Link href="/contact" className="text-left text-slate-400 hover:text-white">Contact</Link>
           </div>
         </div>

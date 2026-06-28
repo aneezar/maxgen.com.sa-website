@@ -1,17 +1,20 @@
-import { getProducts, getServices } from "@/lib/db";
+import { getProducts, getServices, getPosts } from "@/lib/db";
 import { SITE_URL } from "@/lib/constants";
 
 export default async function sitemap() {
-  const products = await getProducts();
-  const services = await getServices();
+  const [products, services, posts] = await Promise.all([
+    getProducts(),
+    getServices(),
+    getPosts(),
+  ]);
 
   const staticRoutes = [
-    "", "/shop", "/verticals", "/about", "/customers", "/partners", "/career", "/contact",
+    "", "/shop", "/verticals", "/about", "/customers", "/partners", "/career", "/contact", "/blog",
   ].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),
-    changeFrequency: path === "" ? "daily" : "weekly",
-    priority: path === "" ? 1 : 0.8,
+    changeFrequency: path === "" || path === "/blog" ? "daily" : "weekly",
+    priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.8,
   }));
 
   const productRoutes = products.map((p) => ({
@@ -28,5 +31,12 @@ export default async function sitemap() {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...productRoutes, ...serviceRoutes];
+  const postRoutes = posts.map((p) => ({
+    url: `${SITE_URL}/blog/${p.slug}`,
+    lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
+    changeFrequency: "monthly",
+    priority: 0.65,
+  }));
+
+  return [...staticRoutes, ...productRoutes, ...serviceRoutes, ...postRoutes];
 }

@@ -7,6 +7,7 @@ import AddToQuoteButton from "@/components/AddToQuoteButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { getProductById, getProducts } from "@/lib/db";
 import { CATEGORIES, fmt, SITE_URL } from "@/lib/constants";
+import AIProductInsights from "@/components/AIProductInsights";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -109,19 +110,28 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-        {/* Image */}
-        <div className="relative">
-          {product.featured && (
-            <span className="absolute top-3 left-3 z-10 bg-amber-500 text-slate-950 font-mono text-[9px] uppercase tracking-wider px-2 py-1 flex items-center gap-1">
-              <Star size={8} /> Featured
-            </span>
+        {/* Image + Gallery */}
+        <div className="space-y-2">
+          <div className="relative">
+            {product.featured && (
+              <span className="absolute top-3 left-3 z-10 bg-amber-500 text-slate-950 font-mono text-[9px] uppercase tracking-wider px-2 py-1 flex items-center gap-1">
+                <Star size={8} /> Featured
+              </span>
+            )}
+            <ProductImg
+              src={heroImg}
+              alt={product.name}
+              className="w-full h-80 sm:h-[420px] border border-slate-200"
+              loading="eager"
+            />
+          </div>
+          {Array.isArray(product.images) && product.images.length > 0 && (
+            <div className="grid grid-cols-4 gap-2">
+              {product.images.slice(0, 4).map((img, i) => (
+                <ProductImg key={i} src={imgixUrl(img, { w: 300, h: 200, q: 75 })} alt={`${product.name} view ${i + 2}`} className="w-full h-20 border border-slate-200" />
+              ))}
+            </div>
           )}
-          <ProductImg
-            src={heroImg}
-            alt={product.name}
-            className="w-full h-80 sm:h-[420px] border border-slate-200"
-            loading="eager"
-          />
         </div>
 
         {/* Details */}
@@ -174,6 +184,17 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
         </div>
       </div>
 
+      {/* Tags */}
+      {Array.isArray(product.tags) && product.tags.length > 0 && (
+        <div className="mt-10 flex flex-wrap gap-2">
+          {product.tags.map((tag) => (
+            <span key={tag} className="font-mono text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 border border-slate-200">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Applications */}
       {product.applications && (
         <div className="mt-12 border-t border-slate-200 pt-10">
@@ -183,6 +204,9 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
           </p>
         </div>
       )}
+
+      {/* AI Product Insights */}
+      {!!process.env.ANTHROPIC_API_KEY && <AIProductInsights product={product} />}
 
       {/* Related products */}
       {related.length > 0 && (

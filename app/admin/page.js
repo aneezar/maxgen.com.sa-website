@@ -1,5 +1,5 @@
 import AdminClient from "@/components/AdminClient";
-import { getProducts, getServices, getContent, getOrders, getLeads, getMessages, getApplications, getQuotes, getCustomers, getPartners } from "@/lib/db";
+import { getProducts, getServices, getContent, getOrders, getLeads, getMessages, getApplications, getQuotes, getCustomers, getPartners, getAdminPosts, getAdminJobs } from "@/lib/db";
 
 export const metadata = {
   title: "Admin",
@@ -9,7 +9,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const [products, services, content, orders, leads, messages, applications, quotes, customers, partners] = await Promise.all([
+  const [products, services, content, orders, leads, messages, applications, quotes, customers, partners, posts, jobs] = await Promise.all([
     getProducts(),
     getServices(),
     getContent(),
@@ -20,6 +20,8 @@ export default async function AdminPage() {
     getQuotes(),
     getCustomers(),
     getPartners(),
+    getAdminPosts(),
+    getAdminJobs(),
   ]);
 
   return (
@@ -34,6 +36,9 @@ export default async function AdminPage() {
       initialQuotes={quotes}
       initialCustomers={customers}
       initialPartners={partners}
+      initialPosts={posts}
+      initialJobs={jobs}
+      hasAI={!!process.env.ANTHROPIC_API_KEY}
     />
   );
 }

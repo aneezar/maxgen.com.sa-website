@@ -19,9 +19,11 @@ const companyLinks = [
   { href: "/customers", label: "Major Customers" },
   { href: "/partners", label: "Partners" },
   { href: "/career", label: "Career" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const tailLinks = [
+  { href: "/ai-tools", label: "AI Tools" },
   { href: "/contact", label: "Contact" },
   { href: "/admin", label: "Admin" },
 ];

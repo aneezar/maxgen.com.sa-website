@@ -4,9 +4,10 @@ import { useState } from "react";
 import NavBar from "./NavBar";
 import QuoteBasketDrawer from "./QuoteBasketDrawer";
 import Footer from "./Footer";
+import AIChatWidget from "./AIChatWidget";
 import { QuoteProvider } from "./QuoteContext";
 
-export default function SiteChrome({ content, children }) {
+export default function SiteChrome({ content, children, hasAI = false }) {
   const [quoteOpen, setQuoteOpen] = useState(false);
 
   return (
@@ -24,6 +25,7 @@ export default function SiteChrome({ content, children }) {
 
       <Footer content={content} />
       <QuoteBasketDrawer open={quoteOpen} onClose={() => setQuoteOpen(false)} />
+      {hasAI && <AIChatWidget />}
     </QuoteProvider>
   );
 }

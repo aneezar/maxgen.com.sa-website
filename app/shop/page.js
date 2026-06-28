@@ -5,6 +5,7 @@ import ShopFilters from "@/components/ShopFilters";
 import ProductCard from "@/components/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import QuickViewModal from "@/components/QuickViewModal";
+import AIProductSearch from "@/components/AIProductSearch";
 import { getProductsFiltered, getBrands, getMaxPrice, getProductById } from "@/lib/db";
 import { CATEGORIES } from "@/lib/constants";
 
@@ -79,7 +80,12 @@ export default async function ShopPage({ searchParams: searchParamsPromise }) {
 
         <div className="pb-6 border-b border-slate-200 mb-8">
           <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Shop</p>
-          <h1 className="text-3xl font-bold text-slate-900 font-display">Full Catalog</h1>
+          <h1 className="text-3xl font-bold text-slate-900 font-display mb-4">Full Catalog</h1>
+          {!!process.env.ANTHROPIC_API_KEY && (
+            <div className="max-w-2xl">
+              <AIProductSearch />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[230px_1fr] gap-8">

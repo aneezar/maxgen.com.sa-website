@@ -6,118 +6,128 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Maxgen** is a B2B e-commerce platform for electrical accessories and ELV (Extra Low Voltage) systems. It is a full-stack Next.js 15 application deployed on Cloudflare Workers via the OpenNext adapter, with Supabase (PostgreSQL) as the database.
+**Maxgen** is a B2B e-commerce platform for electrical accessories and ELV (Extra Low Voltage) systems. Full-stack Next.js 15 app deployed on Cloudflare Workers via the OpenNext adapter, with Supabase (PostgreSQL) as the database.
 
-Key capabilities:
-- Product catalog with categories (switches, MCBs, distribution boards, wiring, cable trays, lighting)
-- Verticals/services pages dynamically rendered from database
-- RFQ (Request for Quote) system with PDF export and email delivery
-- Shopping cart and order management
-- PIN-protected admin dashboard (products, services, CMS content, analytics, quotes, customers, partners)
-- SEO-optimised: sitemap.xml, robots.txt, per-page metadata, JSON-LD structured data
-- Email notifications via Resend API
-- Multi-region presence (India, Saudi Arabia, UK, USA)
-
-**Stack:** Next.js 15.5 · React 19 · Supabase · Cloudflare Workers · Tailwind CSS 3.4 · Resend (email)
+**Stack:** Next.js 15.5 · React 19 · Supabase · Cloudflare Workers · Tailwind CSS 3.4 · Resend (email) · lucide-react (icons)
 
 ---
 
 ## Commands
 
 ```bash
-# Development
-npm run dev        # Start Next.js dev server at localhost:3000
-npm run build      # Production build
-
-# Cloudflare
-npm run preview    # Build + run locally in actual Cloudflare Workers runtime (test before deploy)
+npm run dev        # Next.js dev server at localhost:3000
+npm run build      # Production build (Next.js only)
+npm run lint       # ESLint (next/core-web-vitals)
+npm run preview    # Build + run in actual Cloudflare Workers runtime (use before deploy)
 npm run deploy     # Build + deploy to Cloudflare Workers
-npm run cf-typegen # Regenerate Cloudflare environment types from wrangler.jsonc
-
-# Code quality
-npm run lint       # Next.js ESLint
+npm run cf-typegen # Regenerate Cloudflare env types → cloudflare-env.d.ts
 ```
+
+There is no automated test suite. All validation is manual.
 
 ---
 
 ## Environment Variables
 
-Required in `.env.local`:
+`.env.local` (never commit):
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=        # Server-only — never prefix NEXT_PUBLIC_
+NEXT_PUBLIC_ADMIN_PIN=            # Admin dashboard PIN
 NEXT_PUBLIC_SITE_URL=https://maxgen.com.sa
-RESEND_API_KEY=       # Optional — email alerts are best-effort and never block form submissions
+NEXT_PUBLIC_IMGIX_DOMAIN=         # Optional — imgix subdomain for image optimisation
+RESEND_API_KEY=                   # Optional — email alerts are fire-and-forget
+ALERT_FROM_EMAIL=                 # Optional — defaults to Resend test sender
 ```
 
 ---
 
 ## Architecture
 
-### Layers
+### Layer responsibilities
 
-| Layer | Location | Role |
-|-------|----------|------|
-| Pages | `app/` | Next.js App Router; SSR/ISR; fetch directly from `lib/db.js` at render time |
-| DB access | `lib/db.js` | All Supabase reads and writes — single centralised file |
-| Mutations | `lib/actions.js` | Server Actions for form submissions and admin mutations; triggers `revalidatePath` |
-| Components | `components/` | React client and server components |
-| Email | `lib/email.js` | Resend API; always fire-and-forget — never throws to caller |
+| Layer | File(s) | Rule |
+|-------|---------|------|
+| DB reads/writes | `lib/db.js` | All Supabase queries live here — nowhere else |
+| Mutations | `lib/actions.js` | All Server Actions; always call `revalidatePath` after writes |
+| Email | `lib/email.js` | All Resend calls; always fire-and-forget (`.catch()` only, never `await` in actions) |
+| Auth | `lib/auth.js` | Single export `ADMIN_PIN` read from `NEXT_PUBLIC_ADMIN_PIN` env |
+| Supabase clients | `lib/supabaseClient.js` (anon) · `lib/supabaseServer.js` (service role) | Public reads use `supabase`; all admin writes use `supabaseAdmin` |
+| Image processing | `lib/imageUtils.js` | Client-side Canvas resize/validate — runs in browser, not server |
+| Image URLs | `lib/imgix.js` | `imgixUrl(src, { w, h, q, fit })` — returns imgix URL if domain set, else original |
+| Static data | `lib/constants.js` | `CATEGORIES`, `CLIENTS`, `PARTNERS`, `CAREERS`, `fmt()`, `parseBranches()`, `SITE_URL`, `COMPANY_EMAIL` |
+| Components | `components/` | Mix of client (`"use client"`) and server components |
+| Admin | `components/AdminClient.jsx` (auth + tab routing) · `components/admin/*.jsx` (tab panels) · `components/QuoteAdminPanel.jsx` · `components/AnalyticsTab.jsx` | |
 
-**Data flow:**
+### Two Supabase clients — critical distinction
+
+- `lib/supabaseClient.js` exports `supabase` (anon key) — used for public reads and customer-submitted inserts (quotes, messages, leads, applications, orders).
+- `lib/supabaseServer.js` exports `supabaseAdmin` (service role key) — used exclusively for admin writes (products, services, customers, partners, site_content, quote status updates) and admin reads (orders, messages, leads, applications).
+- **Never import `supabaseAdmin` into a client component.** It must only be called from Server Actions or server-side `lib/db.js` functions.
+
+### Data flow
 
 ```
-User action
-  → Server Action (lib/actions.js)
-  → DB mutation (lib/db.js)
-  → Email alert (lib/email.js, best-effort)
-  → revalidatePath
+Public form → Server Action (lib/actions.js)
+              → lib/db.js (supabase anon insert)
+              → lib/email.js fire-and-forget alert
+              → revalidatePath
 
-Public reads:
-  Page render → lib/db.js → Supabase
+Admin mutation → Server Action
+               → lib/db.js (supabaseAdmin write)
+               → revalidatePath on affected routes
+
+Public page render → lib/db.js (supabase anon read) → Supabase
+Admin page render  → lib/db.js (supabaseAdmin read)  → Supabase
 ```
 
-### Key Files
+### Image upload flow
 
-| File | Purpose |
-|------|---------|
-| `lib/db.js` | Every database operation (`getProducts`, `getServiceBySlug`, `saveMessage`, `placeOrder`, etc.) |
-| `lib/actions.js` | Every Server Action (contact, leads, jobs, orders, all admin mutations) |
-| `lib/constants.js` | Product categories, customer list, partner list, career listings, formatting helpers |
-| `lib/supabaseClient.js` | Supabase client initialisation |
-| `lib/email.js` | Resend email sending logic |
-| `lib/imageUtils.js` | Image validation and resizing before storage |
-| `lib/imgix.js` | Image optimisation URL helper |
-| `components/AdminClient.jsx` | Full admin dashboard UI (PIN-gated) |
-| `components/CartContext.jsx` | Client-side shopping cart context (not persisted to DB) |
-| `components/CartDrawer.jsx` | Cart UI |
-| `app/api/export/[id]/route.js` | PDF quote export endpoint |
-| `app/sitemap.js` | Dynamic sitemap |
-| `app/robots.js` | robots.txt |
+Images are resized and validated **client-side** in the browser (Canvas API in `lib/imageUtils.js`) before being stored as base64 data URLs or uploaded to Supabase Storage. `sharp` and server-side image processing cannot be used — Cloudflare Workers does not support native binaries.
+
+### Admin dashboard
+
+- Route: `/admin` — PIN-gated, no-store cache header set in `next.config.js`
+- `AdminClient.jsx`: checks PIN against `ADMIN_PIN`, renders tab bar and delegates to tab components
+- Tab components in `components/admin/`: `ProductsTab`, `VerticalsTab`, `ContentTab`, `OrdersTab`, `LeadsTab`, `MessagesTab`, `ApplicationsTab`, `ImageUploadField`
+- `AnalyticsTab.jsx` and `QuoteAdminPanel.jsx` live directly in `components/`
+- **Customers and Partners** have DB functions and Server Actions but no admin tab yet — data appears only in AnalyticsTab KPI counts
+- Quote workflow: customer submits RFQ → admin sets status (pending → reviewed → quoted → accepted → rejected) → status change to "quoted" auto-triggers `notifyCustomerEmail` → admin can also manually trigger `adminSendQuoteEmail`
 
 ---
 
 ## Database Schema
 
-All tables live in Supabase (PostgreSQL) with Row Level Security (public read/write — no user auth system).
+All tables in Supabase PostgreSQL with RLS enabled.
 
-| Table | Purpose | Notable Fields |
-|-------|---------|---------------|
-| `products` | Product catalog | cat, name, spec, price, stock, status, image, brand, featured, applications |
-| `services` | Verticals/divisions | slug, division, title, description, detail, image, sort_order |
-| `quotes` | RFQ requests | status, contact_name, company, phone, email, items (JSONB), boq_url, admin_note |
-| `orders` | Completed orders | items (JSONB), subtotal, vat, grand_total |
-| `customers` | Major client list (CMS-managed) | name, sector, note, sort_order |
-| `partners` | Partner list (CMS-managed) | name, type, focus |
-| `site_content` | Singleton CMS row (id=1) | data (JSONB) — hero, about, contact, branches text |
-| `messages` | Contact form submissions | name, phone, email, message |
-| `leads` | Email/phone captures | email, phone |
-| `applications` | Job applications | role, name, email, phone |
+| Table | Key columns | Notes |
+|-------|-------------|-------|
+| `products` | `id` (text PK), `cat`, `name`, `spec`, `price`, `stock`, `status`, `image`, `brand`, `featured`, `applications`, `created_at`, `updated_at` | `updated_at` trigger added in sprint7_product_updated_at.sql |
+| `services` | `slug` (text PK), `division`, `title`, `description`, `detail`, `image`, `sort_order` | |
+| `quotes` | `id` (text, `MG-RFQ-*`), `status`, `contact_name`, `company`, `phone`, `email`, `items` (JSONB), `boq_url`, `admin_note`, `subtotal` | `items` shape: `[{ id, name, price, qty, brand? }]` |
+| `orders` | `id`, `items` (JSONB), `subtotal`, `vat`, `grand_total`, `placed_at` | |
+| `customers` | `id` (uuid), `name`, `sector`, `note`, `sort_order` | |
+| `partners` | `id` (uuid), `name`, `type`, `focus`, `sort_order` | |
+| `site_content` | `id=1`, `data` (JSONB) | Singleton CMS row; JSONB keys: `heroTag`, `heroTitle`, `heroBody`, `contactAddress`, `contactPhone`, plus branch/about fields |
+| `messages` | `id`, `name`, `phone`, `email`, `message`, `submitted_at` | |
+| `leads` | `id`, `email`, `phone`, `captured_at` | |
+| `applications` | `id`, `role`, `name`, `email`, `phone`, `applied_at` | |
 
-`items` in `quotes` and `orders` are JSONB arrays of `{ id, name, price, quantity }`.
+### RLS posture (after sprint7_security.sql)
 
-**Migration order:** `supabase/schema.sql` → `supabase/seed.sql` → files in `supabase/migrations/` (run via scripts in `scripts/`).
+- **Public SELECT**: `products`, `services`, `customers`, `partners`, `site_content`, `quotes` (needed by `/my-quotes`)
+- **Public INSERT only**: `messages`, `leads`, `applications`, `orders`, `quotes`
+- **No public writes**: `products`, `services`, `customers`, `partners`, `site_content`, quote status updates — service role key required
+- **No public SELECT**: `messages`, `leads`, `applications`, `orders`
+
+### Migration conventions
+
+- New migrations → `supabase/migrations/sprint<N>_<feature>.sql` (never edit after applying)
+- Runner scripts → `scripts/run-sprint<N>.mjs` (must be idempotent: `IF EXISTS` / `IF NOT EXISTS`)
+- `supabase/schema.sql` is the initial baseline only — do not modify for post-setup changes
+- `supabase/seed.sql` is for local/staging only — never run on production
 
 ---
 
@@ -125,178 +135,103 @@ All tables live in Supabase (PostgreSQL) with Row Level Security (public read/wr
 
 ```
 app/
-  page.js                        # Home
-  admin/page.js                  # Admin dashboard (PIN-protected)
-  shop/page.js                   # Product listing
-  shop/[id]/page.js              # Product detail
-  verticals/page.js              # Services listing
-  verticals/[slug]/page.js       # Service detail
-  about/, contact/, career/      # Static content pages
-  customers/, partners/          # CMS-driven list pages
-  my-quotes/                     # Customer RFQ history
-  api/export/[id]/route.js       # PDF quote export
-  sitemap.js                     # Dynamic sitemap (products + services)
-  robots.js                      # robots.txt
+  page.js                     # Home (ISR 1h) — fetchs featured products + site_content
+  layout.js                   # Root layout: fonts, OG metadata, Org JSON-LD, SiteChrome
+  admin/page.js               # Admin (no-store) — fetches all tables server-side
+  shop/page.js                # Product listing — server-side filtered via URL params
+  shop/[id]/page.js           # Product detail
+  shop/loading.js             # Skeleton loader
+  verticals/page.js           # Services listing
+  verticals/[slug]/page.js    # Service detail
+  my-quotes/page.js           # Customer RFQ history (localStorage + live status fetch)
+  my-quotes/[id]/page.js      # Quote detail with status timeline
+  quote/[id]/print/page.js    # Printable/PDF quote page
+  api/export/[id]/route.js    # CSV quote export (no-store)
+  sitemap.js                  # Dynamic — products (updated_at) + services + static routes
+  robots.js                   # robots.txt
+  about/, contact/, career/, customers/, partners/
 ```
 
 ---
 
-## Deployment
+## SEO Implementation
 
-- **`wrangler.jsonc`** — Cloudflare Workers config: `main: ".open-next/worker.js"`, `nodejs_compat` flag, assets binding, observability enabled
-- **`open-next.config.ts`** — OpenNext adapter (default config, no overrides required)
-- **`next.config.js`** — Remote image patterns (Unsplash), custom cache headers for `/admin` and `/api/export`
-- Deploy via `npm run deploy` or Cloudflare Workers Builds (Git-triggered auto-build)
-- Always run `npm run preview` in the Workers runtime before deploying to catch Workers-specific issues
-
----
-
-## Admin Dashboard
-
-- Route: `/admin`
-- PIN hardcoded in `components/AdminClient.jsx` as `ADMIN_PIN = "4490"` — **must be changed before production**
-- Tabs: Analytics · Products · Services · Content · Quotes · Customers · Partners · Leads · Messages · Applications · Orders
-- Quote workflow: customer submits RFQ → admin views in Quotes tab → updates status → sends quote via email → can upload BOQ file
-- Image upload goes through `lib/imageUtils.js` (validation + resizing) before storage
+- `generateMetadata()` on every public page
+- Root layout has: OG tags, Twitter card, Organization JSON-LD
+- `app/sitemap.js` includes static routes + all products (using `updated_at`) + services
+- `SITE_URL` from `lib/constants.js` is the canonical base
+- Product and service pages use `alternates: { canonical: ... }` for self-referential canonical URLs
+- `metadataBase` set in root layout so relative OG image URLs resolve correctly
+- `next.config.js` accepts imgix domain in `remotePatterns` via `NEXT_PUBLIC_IMGIX_DOMAIN`
 
 ---
 
-## Mandatory Development Workflow
+## Email (Resend)
 
-Before starting any task:
-
-1. **Read before writing.** Read the relevant files in `lib/db.js`, `lib/actions.js`, and the affected component before making changes.
-2. **Understand the data flow.** Trace the path from UI → Server Action → DB → revalidation before editing any layer.
-3. **Check existing utilities.** Check `lib/constants.js`, `lib/imageUtils.js`, `lib/email.js`, and `lib/imgix.js` before adding new utility code — the function may already exist.
-4. **Never modify `supabase/schema.sql` directly** for changes after initial setup. Write a new migration file in `supabase/migrations/` and a runner script in `scripts/`.
-5. **Test locally first.** Run `npm run dev` for general changes. Run `npm run preview` for anything touching Cloudflare Workers bindings, headers, or edge runtime behaviour.
-6. **Lint before finishing.** Run `npm run lint` and resolve all errors before considering a task complete.
+- All email goes through `lib/email.js` → `sendAlertEmail()` → Resend HTTPS API
+- Works on Cloudflare Workers (V8 isolates have no TCP, so traditional SMTP is impossible)
+- One automatic retry on 5xx or 429 with 1-second delay
+- Functions: `alertLeadEmail`, `alertMessageEmail`, `alertApplicationEmail`, `alertRFQEmail`, `notifyCustomerEmail` (auto on status=quoted), `sendQuoteEmailToCustomer` (manual trigger)
+- No `RESEND_API_KEY` → silent no-op (logs a warning)
 
 ---
 
-## Regression Prevention Policy
+## Cloudflare Workers Constraints
 
-- **Do not modify `lib/db.js` without checking all callers.** Every function in this file is shared — breaking one call site can affect multiple pages and Server Actions.
-- **Do not change Server Action signatures** in `lib/actions.js` without updating every component that calls the action.
-- **Do not alter Supabase table column names or types** without a coordinated migration and corresponding update to all `lib/db.js` queries that reference those columns.
-- **Do not remove fields from the `site_content` JSONB `data` object** without confirming no page renders them.
-- **Cart state is client-only.** `CartContext.jsx` uses React context — do not attempt to persist cart to the database without a full auth system.
-- **Email failures must never break form submissions.** All calls in `lib/email.js` are fire-and-forget; keep them wrapped in try/catch.
-- **Revalidation is required after every mutation.** Every Server Action that writes to Supabase must call `revalidatePath` on the affected routes.
-- After any change to `app/sitemap.js` or `app/robots.js`, verify the output at `/sitemap.xml` and `/robots.txt` locally.
+- No native Node.js binaries (`sharp`, `canvas`, bcrypt with native addons, etc.)
+- `nodejs_compat` flag is enabled — most Node built-ins work via polyfills, but native addons do not
+- Run `npm run preview` (OpenNext Cloudflare preview) before `npm run deploy` to catch Workers-specific failures that `npm run build` will not catch
+- Secrets go in Cloudflare Workers env (not `.env` files): `wrangler secret put SECRET_NAME`
+- Custom domains: `maxgen.com.sa` and `www.maxgen.com.sa` configured in `wrangler.jsonc`
 
 ---
 
-## Database Safety Rules
+## Regression Prevention
 
-- **Never run raw SQL against the production Supabase instance** without first testing on a local or staging instance.
-- **Always write additive migrations.** Add new columns with defaults or as nullable. Never drop or rename columns in a single migration without a transition period.
-- **Migration file naming convention:** `supabase/migrations/sprint<N>_<feature>.sql` — e.g. `sprint7_notifications.sql`.
-- **Runner scripts** go in `scripts/run-sprint<N>.mjs` and must be idempotent (safe to run twice).
-- **Do not change RLS policies** without understanding all tables that will be affected — current policy is public read/write to support the storefront without user accounts.
-- **JSONB columns (`items`, `data`):** always validate the shape of data before writing; a malformed JSON write can break the admin dashboard or order display.
-- **Never seed production.** `supabase/seed.sql` is for local/staging only.
+- **`lib/db.js` is shared** — changing a function signature breaks every caller silently. Check all usages before editing.
+- **`revalidatePath` is mandatory** after every Server Action write — missing it causes stale pages.
+- **Never pass `supabaseAdmin` to a client component** — it would expose the service role key in the browser bundle.
+- **`lib/constants.js` is the single source of truth** for `CATEGORIES`, `SITE_URL`, `COMPANY_EMAIL` — do not duplicate these values in components.
+- **Email calls must never throw to callers** — always `.catch(err => console.error(...))` and never `await` in a way that blocks the response.
+- **`site_content.data` JSONB keys** — removing a key breaks any page that renders it. Always add keys; never remove without confirming no page reads them.
+- **`CartContext`, `CartDrawer`, `AddToCartButton`** — deleted in Sprint 7. The quote system (`QuoteContext`, `QuoteBasketDrawer`) is the correct replacement.
+
+---
+
+## Sprint History
+
+| Sprint | Theme |
+|--------|-------|
+| 1–2 | Site scaffold + B2B landing page |
+| 3 | Product catalogue: server-side filtering, QuickViewModal, brand/featured/applications columns |
+| 4 | RFQ portal: QuoteContext, BOQ upload, Quotes admin tab, email alert |
+| 5 | Customer RFQ history: `/my-quotes`, QuoteStatusTimeline, `notifyCustomerEmail` |
+| 6 | SEO & performance: metadata, sitemap, JSON-LD, ISR, AnalyticsTab, PDF quote export |
+| 7 | Security hardening: service-role client, RLS lockdown, AdminClient split to `components/admin/`, DB indexes, `updated_at` trigger |
+
+**Pending after Sprint 7:** `scripts/run-sprint7.mjs` is untracked (not committed). Sprint 7 DB migrations must be run against production via this script before the RLS security changes take effect.
 
 ---
 
 ## Deployment Checklist
 
-Before running `npm run deploy`:
+Before `npm run deploy`:
 
-- [ ] `ADMIN_PIN` changed from default `"4490"` in `components/AdminClient.jsx`
-- [ ] `.env.local` values confirmed and set as Cloudflare Workers environment secrets (not committed to git)
-- [ ] `RESEND_API_KEY` set and domain verified with Resend for email delivery
-- [ ] `npm run build` passes with no errors
-- [ ] `npm run lint` passes with no errors
-- [ ] `npm run preview` tested locally in the Workers runtime
-- [ ] All Supabase migrations applied to the production database
-- [ ] `NEXT_PUBLIC_SITE_URL` set to the correct production domain
-- [ ] Sitemap and robots.txt verified at production URL after deploy
-- [ ] Admin dashboard tested at `/admin` with the production PIN
-
----
-
-## Audit Mode
-
-When asked to audit the codebase (security, performance, SEO, or code quality), follow this order:
-
-1. **Security:** Check `ADMIN_PIN` value in `components/AdminClient.jsx`. Verify no secrets in committed files. Check RLS policy coverage in `supabase/schema.sql`.
-2. **Data integrity:** Verify all Server Actions in `lib/actions.js` call `revalidatePath` after mutations.
-3. **Email resilience:** Verify all `lib/email.js` calls are inside try/catch blocks and failures are only logged, never thrown.
-4. **SEO:** Verify `generateMetadata()` is present on all public-facing pages. Check `app/sitemap.js` includes all dynamic routes (products + services). Confirm JSON-LD in `app/layout.js`.
-5. **Image handling:** Confirm all image uploads pass through `lib/imageUtils.js` before storage.
-6. **Dead code:** Check `lib/constants.js` for unused exports. Check `components/` for components not imported anywhere.
-7. **Performance:** Check `next.config.js` cache headers. Confirm ISR or static generation is used where appropriate (product and service pages).
-
----
-
-## Git Workflow
-
-- **Branch naming:** `feat/<feature>`, `fix/<issue>`, `chore/<task>`, `sprint/<N>-<description>`
-- **Commit messages:** Follow the existing convention: `feat(scope): description` — e.g. `feat(quotes): add BOQ upload`, `fix(admin): correct PIN validation`
-- **One logical change per commit.** Do not bundle unrelated changes.
-- **Never commit `.env.local`** or any file containing Supabase keys, Resend keys, or the admin PIN.
-- **Migration files are permanent.** Never edit or delete files in `supabase/migrations/` after they have been applied to any environment.
-- **Before pushing:** run `npm run lint` and `npm run build` to confirm the branch is deployable.
+- [ ] `NEXT_PUBLIC_ADMIN_PIN` set as Cloudflare Workers secret (not the default sentinel)
+- [ ] `SUPABASE_SERVICE_ROLE_KEY` set as Cloudflare Workers secret
+- [ ] `npm run lint` passes with zero errors
+- [ ] `npm run build` passes with zero errors
+- [ ] `npm run preview` tested in Workers runtime
+- [ ] Sprint migrations applied to production Supabase
+- [ ] `RESEND_API_KEY` configured and `maxgen.com.sa` verified in Resend dashboard
 
 ---
 
 ## Coding Standards
 
-- All database operations belong in `lib/db.js`. Do not write Supabase queries inline in components or pages.
-- All form mutations belong in `lib/actions.js` as Server Actions. Do not use API routes for mutations unless there is a specific need (e.g. the PDF export endpoint).
-- Client components must be explicitly marked with `"use client"`. Server components fetch data directly from `lib/db.js`.
-- Tailwind CSS only — do not introduce a separate CSS file or CSS-in-JS library.
-- Do not add new npm dependencies without confirming Cloudflare Workers compatibility (`nodejs_compat` flag is enabled but not all Node APIs are available).
-- Keep `lib/constants.js` as the single source of truth for static lists (product categories, regions, careers). Do not hardcode these values in components.
-- Email sending must always go through `lib/email.js`. Do not call the Resend SDK directly from actions or components.
-- Image processing must always go through `lib/imageUtils.js` before any file is stored.
-
----
-
-## Testing & Validation Checklist
-
-There is no automated test suite. Manual validation is required for every change:
-
-### After any `lib/db.js` change
-- [ ] Verify the affected page renders correctly in `npm run dev`
-- [ ] Verify the admin dashboard still loads and displays data correctly at `/admin`
-- [ ] Check that no other pages calling the modified function are broken
-
-### After any `lib/actions.js` change
-- [ ] Submit the relevant form in the browser and confirm success
-- [ ] Confirm the Supabase table received the correct data
-- [ ] Confirm `revalidatePath` caused the page to reflect the updated data
-
-### After any admin dashboard change (`components/AdminClient.jsx`)
-- [ ] Test all tabs in `/admin` to confirm no regressions
-- [ ] Test PIN entry (correct and incorrect)
-- [ ] Test image upload flow if image-related code was changed
-
-### After any SEO/metadata change
-- [ ] Check page `<title>` and `<meta description>` in browser DevTools
-- [ ] Validate `/sitemap.xml` includes expected URLs
-- [ ] Validate JSON-LD with Google's Rich Results Test (or browser DevTools)
-
-### After any Cloudflare/deployment config change
-- [ ] Run `npm run preview` and confirm the app works in the Workers runtime
-- [ ] Check cache headers on `/admin` and `/api/export` routes behave correctly
-- [ ] Run `npm run deploy` and smoke-test the production URL
-
-### Before every deploy
-- [ ] Run through the [Deployment Checklist](#deployment-checklist) above
-
----
-
-## Maintenance Notes
-
-- **Sprint history:** Sprint 3 (product catalogue), Sprint 4 (RFQ/quotes + PDF export), Sprint 5 (customer RFQ history + quote status tracking), Sprint 6 (SEO & performance)
-- **Admin PIN rotation:** Change `ADMIN_PIN` in `components/AdminClient.jsx` and redeploy. There is no server-side PIN validation — this is enforced client-side only.
-- **Adding a new product category:** Update `lib/constants.js` (the category list) — no DB migration needed.
-- **Adding a new CMS field:** Add the field to the `data` JSONB in `site_content` via the Supabase dashboard, then update the admin Content tab in `components/AdminClient.jsx` and any page that renders it.
-- **Adding a new vertical/service:** Use the admin Services tab — no code change required.
-
----
-
-*Summary of this file's structure:*
-*Project Overview → Commands → Environment Variables → Architecture → Database Schema → Routing → Deployment → Admin Dashboard → Mandatory Development Workflow → Regression Prevention Policy → Database Safety Rules → Deployment Checklist → Audit Mode → Git Workflow → Coding Standards → Testing & Validation Checklist → Maintenance Notes*
+- All Supabase queries belong in `lib/db.js`. No inline queries in components or pages.
+- All form mutations are Server Actions in `lib/actions.js`. API routes only for special cases (CSV export, PDF).
+- Client components must be explicitly marked `"use client"`. Server components fetch from `lib/db.js` directly.
+- Tailwind CSS only — no additional CSS files or CSS-in-JS.
+- No new npm dependencies without confirming Cloudflare Workers compatibility.
+- Image processing must go through `lib/imageUtils.js` (client-side Canvas) before storage.
