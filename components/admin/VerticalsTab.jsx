@@ -115,30 +115,61 @@ export default function VerticalsTab({ services, setServices }) {
         </div>
       </form>
 
-      <div className="lg:col-span-2 space-y-6">
+      <div className="lg:col-span-2 space-y-8">
         {grouped.map((div) => (
-          <div key={div.division} className="border border-slate-200 bg-slate-50">
-            <div className="px-4 py-3 border-b border-slate-200 font-mono text-[11px] uppercase text-slate-500 tracking-wider">
-              {div.division} · {div.items.length} services
+          <div key={div.division}>
+            <div className="flex items-center justify-between pb-2 mb-4 border-b border-slate-200">
+              <span className="font-mono text-[11px] uppercase text-slate-500 tracking-wider">{div.division}</span>
+              <span className="font-mono text-[11px] text-slate-400">{div.items.length} service{div.items.length !== 1 ? "s" : ""}</span>
             </div>
-            <div className="divide-y divide-slate-200">
-              {div.items.map((s) => (
-                <div key={s.slug} className="flex items-center justify-between px-4 py-3 gap-3">
-                  <ProductImg src={s.image} alt={s.title} className="w-12 h-12 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-slate-900 text-sm font-medium truncate">{s.title}</p>
-                    <p className="font-mono text-[11px] text-slate-500 truncate">{s.description}</p>
+            {div.items.length === 0 ? (
+              <p className="text-slate-400 font-mono text-xs text-center py-6 border border-dashed border-slate-200">
+                No services in this division yet.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {div.items.map((s) => (
+                  <div
+                    key={s.slug}
+                    className={`border flex flex-col overflow-hidden transition-all ${
+                      editingSlug === s.slug
+                        ? "border-amber-500 shadow-sm"
+                        : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="aspect-video overflow-hidden bg-slate-100">
+                      <ProductImg src={s.image} alt={s.title} className="w-full h-full" />
+                    </div>
+                    <div className="px-3 pt-3 pb-2 flex-1">
+                      {s.category && (
+                        <p className="font-mono text-[9px] uppercase tracking-widest text-amber-700 mb-1">{s.category}</p>
+                      )}
+                      <p className="text-slate-900 text-sm font-semibold leading-snug">{s.title}</p>
+                      <p className="font-mono text-[10px] text-slate-400 mt-0.5">/{s.slug}</p>
+                      {s.description && (
+                        <p className="font-mono text-[11px] text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">{s.description}</p>
+                      )}
+                    </div>
+                    <div className="px-3 pb-3 flex gap-2">
+                      <button
+                        onClick={() => startEdit(s)}
+                        aria-label={`Edit ${s.title}`}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 border border-slate-300 text-slate-600 font-mono text-[10px] uppercase hover:border-amber-500 hover:text-amber-700 transition-colors"
+                      >
+                        <Pencil size={11} /> Edit
+                      </button>
+                      <button
+                        onClick={() => remove(s.slug, s.title)}
+                        aria-label={`Delete ${s.title}`}
+                        className="px-3 py-1.5 border border-slate-300 text-slate-400 hover:border-red-400 hover:text-red-400 transition-colors"
+                      >
+                        <Trash2 size={11} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => startEdit(s)} aria-label={`Edit ${s.title}`} className="p-2 border border-slate-300 text-slate-500 hover:border-amber-500"><Pencil size={14} /></button>
-                    <button onClick={() => remove(s.slug, s.title)} aria-label={`Delete ${s.title}`} className="p-2 border border-slate-300 text-slate-500 hover:border-red-500 hover:text-red-400"><Trash2 size={14} /></button>
-                  </div>
-                </div>
-              ))}
-              {div.items.length === 0 && (
-                <p className="text-slate-400 font-mono text-xs text-center py-6">No services in this division yet.</p>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>

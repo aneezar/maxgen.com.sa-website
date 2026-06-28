@@ -253,7 +253,9 @@ export default function AnalyticsTab({ products = [], customers = [], partners =
           <div className="border border-slate-200 bg-white divide-y divide-slate-100 max-h-64 overflow-y-auto">
             {stats.outOfStock.map((p) => (
               <div key={p.id} className="flex items-center gap-3 px-4 py-3">
-                <ProductImg src={p.image} alt={p.name} className="w-9 h-9 flex-shrink-0" />
+                <div className="w-10 h-10 flex-shrink-0 overflow-hidden bg-slate-50 border border-slate-100">
+                  <ProductImg src={p.image} alt={p.name} className="w-full h-full" objectFit="contain" />
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-mono text-[10px] text-slate-400">{p.id}</p>
                   <p className="text-slate-700 text-sm font-medium truncate">{p.name}</p>
@@ -272,7 +274,9 @@ export default function AnalyticsTab({ products = [], customers = [], partners =
           <div className="border border-slate-200 bg-white divide-y divide-slate-100">
             {stats.recent.map((p) => (
               <div key={p.id} className="flex items-center gap-3 px-4 py-3">
-                <ProductImg src={p.image} alt={p.name} className="w-10 h-10 flex-shrink-0" />
+                <div className="w-10 h-10 flex-shrink-0 overflow-hidden bg-slate-50 border border-slate-100">
+                  <ProductImg src={p.image} alt={p.name} className="w-full h-full" objectFit="contain" />
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-mono text-[10px] text-slate-400">{p.id}</p>
                   <p className="text-slate-700 text-sm font-medium truncate">{p.name}</p>

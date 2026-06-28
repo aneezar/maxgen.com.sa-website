@@ -428,7 +428,9 @@ export default function ProductsTab({ products, setProducts }) {
               <button type="button" onClick={() => toggleSelect(p.id)} aria-label={`Select ${p.name}`} className="text-slate-400 hover:text-amber-600 flex-shrink-0">
                 {selected.has(p.id) ? <CheckSquare size={15} className="text-amber-500" /> : <Square size={15} />}
               </button>
-              <ProductImg src={p.image} alt={p.name} className="w-12 h-12 flex-shrink-0" />
+              <div className="w-16 h-12 flex-shrink-0 overflow-hidden bg-slate-50 border border-slate-100">
+                <ProductImg src={p.image} alt={p.name} className="w-full h-full" objectFit="contain" />
+              </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="font-mono text-[10px] text-slate-500">{p.id}</span>
