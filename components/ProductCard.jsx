@@ -43,19 +43,19 @@ export default function ProductCard({ product: p, quickViewHref }) {
       </Link>
 
       {/* SKU + stock */}
-      <div className="flex items-center justify-between px-4 pt-3">
-        <span className="font-mono text-[11px] tracking-wider text-slate-400">{p.id}</span>
-        <div className="flex items-center gap-1.5">
+      <div className="flex items-center justify-between px-3 sm:px-4 pt-3">
+        <span className="font-mono text-[10px] sm:text-[11px] tracking-wider text-slate-400 truncate mr-2">{p.id}</span>
+        <div className="flex items-center gap-1 flex-shrink-0">
           <StatusDot status={p.status} />
-          <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
-            {p.status === "low" ? "Low stock" : "In stock"}
+          <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-500">
+            {p.status === "low" ? "Low" : "In stock"}
           </span>
         </div>
       </div>
 
       {/* Brand badge */}
       {p.brand && (
-        <div className="px-4 pt-1.5">
+        <div className="px-3 sm:px-4 pt-1.5">
           <span className="font-mono text-[9px] text-amber-700 bg-amber-50 px-2 py-0.5 uppercase tracking-widest">
             {p.brand}
           </span>
@@ -63,17 +63,17 @@ export default function ProductCard({ product: p, quickViewHref }) {
       )}
 
       {/* Name + spec */}
-      <Link href={`/shop/${p.id}`} className="px-4 pt-2 pb-4 flex-1 block">
-        <h2 className="text-slate-900 font-semibold text-[15px] leading-snug hover:text-amber-700 line-clamp-2">
+      <Link href={`/shop/${p.id}`} className="px-3 sm:px-4 pt-2 pb-3 sm:pb-4 flex-1 block">
+        <h2 className="text-slate-900 font-semibold text-sm sm:text-[15px] leading-snug hover:text-amber-700 line-clamp-2">
           {p.name}
         </h2>
-        <p className="font-mono text-[12px] text-slate-500 mt-1.5 tracking-wide line-clamp-2">{p.spec}</p>
+        <p className="font-mono text-[11px] sm:text-[12px] text-slate-500 mt-1 sm:mt-1.5 tracking-wide line-clamp-1 sm:line-clamp-2">{p.spec}</p>
       </Link>
 
-      {/* Price + cart */}
-      <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-slate-200 bg-slate-50 mt-auto">
+      {/* Price + cart — stacked on mobile, side-by-side on sm+ */}
+      <div className="px-3 sm:px-4 py-3 border-t border-slate-200 bg-slate-50 mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex flex-col min-w-0">
-          <span className="font-mono text-lg text-amber-600 font-medium truncate">{fmt(p.price)}</span>
+          <span className="font-mono text-base sm:text-lg text-amber-600 font-medium truncate">{fmt(p.price)}</span>
           <span className="font-mono text-[10px] text-slate-500">{p.stock} units</span>
         </div>
         <AddToQuoteButton product={p} />
