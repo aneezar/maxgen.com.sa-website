@@ -18,6 +18,7 @@ export async function POST(request) {
 
   const messages = (body.messages || [])
     .filter((m) => m?.role && m?.content && typeof m.content === "string")
+    .map((m) => ({ ...m, content: m.content.slice(0, 4000) })) // cap each message
     .slice(-20); // keep last 20 turns max
 
   if (!messages.length) {
@@ -26,9 +27,10 @@ export async function POST(request) {
     });
   }
 
-  // Optionally inject product/page context
-  const system = body.context
-    ? `${MAXGEN_SYSTEM}\n\n## Current page context\n${body.context}`
+  // Optionally inject product/page context — capped to prevent prompt injection
+  const rawContext = typeof body.context === "string" ? body.context.slice(0, 2000) : null;
+  const system = rawContext
+    ? `${MAXGEN_SYSTEM}\n\n## Current page context\n${rawContext}`
     : MAXGEN_SYSTEM;
 
   try {

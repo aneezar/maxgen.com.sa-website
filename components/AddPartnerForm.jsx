@@ -3,23 +3,37 @@
 import { useState, useRef } from "react";
 import { Lock, Plus, Loader2, CheckCircle2 } from "lucide-react";
 import { submitPartner } from "@/lib/actions";
-import { ADMIN_PIN } from "@/lib/auth";
 
 export default function AddPartnerForm() {
   const [unlocked, setUnlocked] = useState(false);
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
+  const [pinChecking, setPinChecking] = useState(false);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
   const formRef = useRef(null);
 
-  const checkPin = (e) => {
+  const checkPin = async (e) => {
     e.preventDefault();
-    if (pin === ADMIN_PIN) {
-      setUnlocked(true);
-      setPinError("");
-    } else {
-      setPinError("Incorrect PIN.");
+    setPinChecking(true);
+    setPinError("");
+    try {
+      const res = await fetch("/api/auth/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin }),
+      });
+      if (res.ok) {
+        setUnlocked(true);
+      } else {
+        const data = await res.json();
+        setPinError(data.error || "Incorrect PIN.");
+      }
+    } catch {
+      setPinError("Could not verify — try again.");
+    } finally {
+      setPinChecking(false);
+      setPin("");
     }
   };
 
@@ -44,12 +58,14 @@ export default function AddPartnerForm() {
         </div>
         <form onSubmit={checkPin} className="flex gap-2">
           <input
-            type="text" inputMode="numeric" autoComplete="off"
+            type="password" autoComplete="current-password"
             value={pin} onChange={(e) => setPin(e.target.value.trim())}
             placeholder="PIN"
             className="flex-1 bg-white border border-slate-300 focus:border-amber-500 outline-none px-3 py-2 text-sm text-slate-700 font-mono"
           />
-          <button className="bg-slate-900 text-white font-mono uppercase text-xs px-4">Unlock</button>
+          <button disabled={pinChecking} className="bg-slate-900 disabled:bg-slate-400 text-white font-mono uppercase text-xs px-4">
+            {pinChecking ? <Loader2 size={13} className="animate-spin" /> : "Unlock"}
+          </button>
         </form>
         {pinError && <p className="text-red-500 text-xs font-mono mt-2">{pinError}</p>}
       </div>

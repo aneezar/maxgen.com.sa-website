@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import {
-  Lock, BarChart3, FileText, PackagePlus, Building2, Pencil,
+  BarChart3, FileText, PackagePlus, Building2, Pencil,
   ClipboardList, UserPlus, Inbox, Briefcase, Users, Handshake,
   Newspaper, TrendingUp, Sparkles,
 } from "lucide-react";
-import { ADMIN_PIN } from "@/lib/auth";
 import QuoteAdminPanel from "./QuoteAdminPanel";
 import AnalyticsTab from "./AnalyticsTab";
 import ProductsTab from "./admin/ProductsTab";
@@ -29,9 +28,6 @@ export default function AdminClient({
   initialQuotes, initialCustomers = [], initialPartners = [],
   initialPosts = [], initialJobs = [], hasAI = false,
 }) {
-  const [authed, setAuthed] = useState(false);
-  const [pin, setPin] = useState("");
-  const [pinError, setPinError] = useState("");
   const [tab, setTab] = useState("analytics");
 
   const [products, setProducts] = useState(initialProducts);
@@ -46,34 +42,6 @@ export default function AdminClient({
   const [partners, setPartners] = useState(initialPartners);
   const [posts, setPosts] = useState(initialPosts);
   const [jobs, setJobs] = useState(initialJobs);
-
-  const checkPin = (e) => {
-    e.preventDefault();
-    if (pin === ADMIN_PIN) { setAuthed(true); setPinError(""); }
-    else setPinError("Incorrect PIN.");
-  };
-
-  if (!authed) {
-    return (
-      <section className="max-w-sm mx-auto px-5 py-24">
-        <div className="border border-slate-200 bg-slate-50 px-6 py-8 text-center">
-          <Lock className="text-amber-600 mx-auto mb-3" size={26} />
-          <h2 className="text-slate-900 font-semibold text-lg mb-1">Admin Access</h2>
-          <p className="text-slate-500 text-sm mb-5">Enter the admin PIN to manage the catalog.</p>
-          <form onSubmit={checkPin} className="space-y-3">
-            <input
-              type="text" inputMode="numeric" autoComplete="off"
-              value={pin} onChange={(e) => setPin(e.target.value.trim())}
-              placeholder="PIN"
-              className="w-full bg-white border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700 text-center font-mono"
-            />
-            {pinError && <p className="text-red-500 text-xs font-mono">{pinError}</p>}
-            <button type="submit" className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono uppercase text-sm tracking-wider py-2.5">Unlock</button>
-          </form>
-        </div>
-      </section>
-    );
-  }
 
   const pendingQuotes = quotes.filter((q) => q.status === "pending").length;
 
