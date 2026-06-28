@@ -112,7 +112,7 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
 
         {/* Image + Gallery */}
         <div className="space-y-2">
-          <div className="relative">
+          <div className="relative bg-slate-50 border border-slate-200">
             {product.featured && (
               <span className="absolute top-3 left-3 z-10 bg-amber-500 text-slate-950 font-mono text-[9px] uppercase tracking-wider px-2 py-1 flex items-center gap-1">
                 <Star size={8} /> Featured
@@ -121,14 +121,15 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
             <ProductImg
               src={heroImg}
               alt={product.name}
-              className="w-full h-80 sm:h-[420px] border border-slate-200"
+              className="w-full h-80 sm:h-[420px]"
+              objectFit="contain"
               loading="eager"
             />
           </div>
           {Array.isArray(product.images) && product.images.length > 0 && (
             <div className="grid grid-cols-4 gap-2">
               {product.images.slice(0, 4).map((img, i) => (
-                <ProductImg key={i} src={imgixUrl(img, { w: 300, h: 200, q: 75 })} alt={`${product.name} view ${i + 2}`} className="w-full h-20 border border-slate-200" />
+                <ProductImg key={i} src={imgixUrl(img, { w: 300, h: 200, q: 75 })} alt={`${product.name} view ${i + 2}`} className="w-full h-20 border border-slate-200 bg-slate-50" objectFit="contain" />
               ))}
             </div>
           )}
@@ -222,7 +223,8 @@ export default async function ProductDetailPage({ params: paramsPromise }) {
                 <ProductImg
                   src={imgixUrl(p.image, { w: 400, h: 300, q: 70 })}
                   alt={p.name}
-                  className="w-full h-28"
+                  className="w-full h-28 bg-slate-50"
+                  objectFit="contain"
                 />
                 <div className="px-3 py-3">
                   {p.brand && (

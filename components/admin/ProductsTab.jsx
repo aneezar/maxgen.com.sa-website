@@ -112,7 +112,7 @@ function GalleryField({ images, onChange }) {
       {images.map((img, i) => (
         <div key={i} className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={img} alt="" className="w-10 h-10 object-cover border border-slate-200 flex-shrink-0" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+          <img src={img} alt="" className="w-10 h-10 object-contain bg-slate-50 border border-slate-200 flex-shrink-0" onError={(e) => { e.currentTarget.style.display = "none"; }} />
           <span className="font-mono text-[10px] text-slate-500 truncate flex-1">{img}</span>
           <button type="button" onClick={() => onChange(images.filter((_, j) => j !== i))} className="text-slate-400 hover:text-red-500"><X size={13} /></button>
         </div>

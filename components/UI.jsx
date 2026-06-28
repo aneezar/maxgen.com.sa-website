@@ -14,11 +14,12 @@ export function StatusDot({ status }) {
   );
 }
 
-export function ProductImg({ src, alt, className, loading = "lazy" }) {
+export function ProductImg({ src, alt, className, loading = "lazy", objectFit = "cover" }) {
   const [failed, setFailed] = useState(false);
+  const fitClass = objectFit === "contain" ? "object-contain" : "object-cover";
   if (!src || failed) {
     return (
-      <div className={`flex items-center justify-center bg-slate-200 flex-shrink-0 ${className}`} aria-hidden="true">
+      <div className={`flex items-center justify-center bg-slate-100 flex-shrink-0 ${className}`} aria-hidden="true">
         <ImageOff size={20} className="text-slate-400" />
       </div>
     );
@@ -29,7 +30,7 @@ export function ProductImg({ src, alt, className, loading = "lazy" }) {
       src={src}
       alt={alt}
       onError={() => setFailed(true)}
-      className={`block w-full object-cover flex-shrink-0 ${className}`}
+      className={`block w-full ${fitClass} flex-shrink-0 ${className}`}
       loading={loading}
       decoding="async"
     />

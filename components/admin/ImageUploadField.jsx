@@ -59,7 +59,7 @@ export default function ImageUploadField({ value, onChange, label }) {
       {error && <p className="text-red-500 text-xs font-mono mt-1">{error}</p>}
       {info && !error && <p className="text-emerald-600 text-xs font-mono mt-1">{info}</p>}
       <div className="mt-2">
-        <ProductImg src={value} alt="Preview" className="w-full h-28" />
+        <ProductImg src={value} alt="Preview" className="w-full h-28 bg-slate-50" objectFit="contain" />
       </div>
     </label>
   );

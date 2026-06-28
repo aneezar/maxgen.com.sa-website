@@ -73,13 +73,13 @@ export default function QuickViewModal({ product: p, closeHref }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2">
           {/* Image */}
-          <div className="relative">
+          <div className="relative bg-slate-50">
             {p.featured && (
               <span className="absolute top-3 left-3 z-10 bg-amber-500 text-slate-950 font-mono text-[9px] uppercase tracking-wider px-2 py-0.5">
                 Featured
               </span>
             )}
-            <ProductImg src={imgSrc} alt={p.name} className="w-full h-64 sm:h-full min-h-[280px]" />
+            <ProductImg src={imgSrc} alt={p.name} className="w-full h-64 sm:h-full min-h-[280px]" objectFit="contain" />
           </div>
 
           {/* Details */}

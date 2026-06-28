@@ -38,8 +38,8 @@ export default function ProductCard({ product: p, quickViewHref }) {
       )}
 
       {/* Image */}
-      <Link href={`/shop/${p.id}`} className="block">
-        <ProductImg src={imgSrc} alt={p.name} className="aspect-[4/3] h-auto" />
+      <Link href={`/shop/${p.id}`} className="block bg-slate-50">
+        <ProductImg src={imgSrc} alt={p.name} className="aspect-[4/3] h-auto" objectFit="contain" />
       </Link>
 
       {/* SKU + stock */}
