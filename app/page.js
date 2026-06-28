@@ -166,7 +166,7 @@ export default async function HomePage() {
               <Link
                 key={c.id}
                 href={`/shop?cat=${c.id}`}
-                className="flex flex-col items-center gap-2.5 text-center border border-slate-200 bg-white hover:border-amber-500 hover:shadow-md transition-all px-3 py-6 group"
+                className="flex flex-col items-center gap-2.5 text-center border border-slate-100 bg-white hover:border-amber-500 hover:shadow-md transition-all px-3 py-6 group shadow-[0_2px_8px_rgba(0,0,0,0.07)] sm:shadow-none sm:border-slate-200"
               >
                 <div className="w-11 h-11 rounded-full bg-amber-50 group-hover:bg-amber-100 flex items-center justify-center transition-colors">
                   <Icon size={19} className="text-amber-600" />
