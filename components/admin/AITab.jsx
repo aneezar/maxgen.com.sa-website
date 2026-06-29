@@ -140,18 +140,6 @@ const ADMIN_TOOLS = [
 export default function AITab({ products = [], hasAI = false }) {
   const [tool, setTool] = useState("proposal");
 
-  if (!hasAI) {
-    return (
-      <div className="border border-amber-200 bg-amber-50 px-5 py-8 text-center">
-        <Sparkles size={24} className="text-amber-500 mx-auto mb-3" />
-        <p className="font-semibold text-slate-900 mb-2">AI features not configured</p>
-        <p className="text-slate-500 text-sm max-w-sm mx-auto">
-          Add <code className="bg-amber-100 px-1">ANTHROPIC_API_KEY</code> to your <code>.env.local</code> file and restart the server to enable AI proposal, BOQ, and submittal generation.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6">
       {/* Sidebar */}

@@ -246,11 +246,6 @@ export default function AIToolsClient({ products, hasAI }) {
         <p className="text-slate-500 text-[15px] max-w-2xl">
           Generate professional proposals, BOQs, technical submittals, and get instant product recommendations — powered by AI.
         </p>
-        {!hasAI && (
-          <div className="mt-4 border border-amber-300 bg-amber-50 px-4 py-3 text-amber-800 text-sm font-mono">
-            AI features require an <code>ANTHROPIC_API_KEY</code> in your environment. Add it to <code>.env.local</code> to enable all tools.
-          </div>
-        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
@@ -272,17 +267,13 @@ export default function AIToolsClient({ products, hasAI }) {
         <div className="space-y-6">
           <div className="border border-slate-200 bg-white px-6 py-6">
             <h2 className="font-semibold text-slate-900 mb-4">{TOOLS.find((t) => t.id === activeTool)?.label}</h2>
-            {!hasAI ? (
-              <p className="text-slate-400 font-mono text-sm">Configure <code>ANTHROPIC_API_KEY</code> to enable this tool.</p>
-            ) : (
-              <>
-                {activeTool === "proposal"  && <ProposalPanel onResult={handleResult} />}
-                {activeTool === "boq"       && <BOQPanel onResult={handleResult} />}
-                {activeTool === "submittal" && <SubmittalPanel products={products} onResult={handleResult} />}
-                {activeTool === "recommend" && <RecommendPanel onResult={handleResult} />}
-                {activeTool === "compare"   && <ComparePanel products={products} onResult={handleResult} />}
-              </>
-            )}
+            <>
+              {activeTool === "proposal"  && <ProposalPanel onResult={handleResult} />}
+              {activeTool === "boq"       && <BOQPanel onResult={handleResult} />}
+              {activeTool === "submittal" && <SubmittalPanel products={products} onResult={handleResult} />}
+              {activeTool === "recommend" && <RecommendPanel onResult={handleResult} />}
+              {activeTool === "compare"   && <ComparePanel products={products} onResult={handleResult} />}
+            </>
           </div>
 
           {/* Result area */}
