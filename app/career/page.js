@@ -29,7 +29,7 @@ export default async function CareerPage() {
   return (
     <section className="max-w-4xl mx-auto px-5 py-16">
       <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Careers</p>
-      <h1 className="text-4xl font-bold text-slate-900 mb-4 font-display">Build with us.</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 font-display">Build with us.</h1>
       <p className="text-slate-500 text-[15px] max-w-2xl mb-10">
         We&apos;re hiring across engineering, sales, and operations. Open roles below — tap one to apply.
       </p>

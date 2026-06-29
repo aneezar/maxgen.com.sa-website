@@ -138,7 +138,7 @@ export default async function BlogPostPage({ params: paramsPromise }) {
           )}
         </div>
 
-        <h1 className="text-4xl font-bold text-slate-900 leading-tight font-display mb-5">{post.title}</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight font-display mb-5">{post.title}</h1>
 
         {post.excerpt && (
           <p className="text-slate-500 text-lg leading-relaxed mb-8 border-l-4 border-amber-400 pl-5">{post.excerpt}</p>

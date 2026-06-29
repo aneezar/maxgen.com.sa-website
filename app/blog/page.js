@@ -37,7 +37,7 @@ function PostCard({ post }) {
   const coverImg = post.cover_image ? imgixUrl(post.cover_image, { w: 800, h: 450, q: 80, fit: "crop" }) : null;
 
   return (
-    <Link href={`/blog/${post.slug}`} className="group border border-slate-200 bg-white hover:border-amber-400 hover:shadow-md transition-all flex flex-col">
+    <Link href={`/blog/${post.slug}`} className="group border border-slate-200 bg-white shadow-sm hover:border-amber-400 hover:shadow-md transition-all flex flex-col">
       <div className="w-full h-48 bg-slate-100 overflow-hidden">
         {coverImg ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -98,7 +98,7 @@ export default async function BlogPage({ searchParams: searchParamsPromise }) {
     <section className="max-w-7xl mx-auto px-5 py-14">
       <div className="mb-10">
         <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Insights</p>
-        <h1 className="text-4xl font-bold text-slate-900 font-display mb-4">Blog &amp; Updates</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 font-display mb-4">Blog &amp; Updates</h1>
         <p className="text-slate-500 text-[15px] max-w-2xl">
           Project case studies, technical insights, company news, and success stories from the Maxgen team.
         </p>

@@ -48,11 +48,11 @@ export default function CareerClient({ roles }) {
                   <CheckCircle2 size={16} /> Application received — we&apos;ll be in touch.
                 </div>
               ) : (
-                <form action={(fd) => handleSubmit(fd, role.title)} className="flex flex-col sm:flex-row gap-2">
-                  <input name="name" placeholder="Your name" className="flex-1 bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700" />
-                  <input name="email" type="email" placeholder="Email" className="flex-1 bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700" />
-                  <input name="phone" type="tel" placeholder="Phone (optional)" className="flex-1 bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700" />
-                  <button disabled={status === "saving"} className="bg-amber-500 disabled:bg-slate-300 hover:bg-amber-400 text-slate-950 font-mono uppercase text-xs tracking-wider px-4 py-2.5 flex items-center justify-center gap-1.5 whitespace-nowrap">
+                <form action={(fd) => handleSubmit(fd, role.title)} className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input name="name" placeholder="Your name" className="bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700" />
+                  <input name="email" type="email" placeholder="Email" className="bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700" />
+                  <input name="phone" type="tel" placeholder="Phone (optional)" className="bg-slate-50 border border-slate-300 focus:border-amber-500 outline-none px-3 py-2.5 text-sm text-slate-700" />
+                  <button disabled={status === "saving"} className="bg-amber-500 disabled:bg-slate-300 hover:bg-amber-400 text-slate-950 font-mono uppercase text-xs tracking-wider px-4 py-2.5 flex items-center justify-center gap-1.5">
                     {status === "saving" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />} Apply
                   </button>
                 </form>

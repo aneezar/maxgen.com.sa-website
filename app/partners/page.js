@@ -17,7 +17,7 @@ export default async function PartnersPage() {
   return (
     <section className="max-w-6xl mx-auto px-5 py-16">
       <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Partners</p>
-      <h1 className="text-4xl font-bold text-slate-900 mb-4 font-display">Backed by the brands installers trust.</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 font-display">Backed by the brands installers trust.</h1>
       <p className="text-slate-500 text-[15px] max-w-2xl mb-10">
         We work with established technology and manufacturing partners to keep our catalog certified, current, and serviceable.
       </p>

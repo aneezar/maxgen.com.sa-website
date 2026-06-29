@@ -19,7 +19,7 @@ export default async function VerticalsPage() {
   return (
     <section className="max-w-6xl mx-auto px-5 py-16">
       <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Verticals</p>
-      <h1 className="text-4xl font-bold text-slate-900 mb-4 font-display">One group, four operating divisions.</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 font-display">One group, four operating divisions.</h1>
       <p className="text-slate-500 text-[15px] max-w-2xl mb-12">
         Maxgen organizes its work into four verticals, each staffed and stocked to handle its own scope end to end —
         from accessory supply through full systems integration.

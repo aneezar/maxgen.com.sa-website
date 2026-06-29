@@ -14,7 +14,7 @@ export default async function AboutPage() {
   return (
     <section className="max-w-4xl mx-auto px-5 py-16">
       <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">About Maxgen</p>
-      <h1 className="text-4xl font-bold text-slate-900 mb-6 font-display">{content?.aboutTitle}</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 font-display">{content?.aboutTitle}</h1>
       <div className="space-y-4 text-slate-500 leading-relaxed text-[15px]">
         {(content?.aboutBody || "").split("\n\n").map((para, i) => <p key={i}>{para}</p>)}
       </div>

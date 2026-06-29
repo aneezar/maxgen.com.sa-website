@@ -32,7 +32,7 @@ export default async function ContactPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div>
           <p className="font-mono text-amber-600 text-xs uppercase tracking-[0.2em] mb-3">Get In Touch</p>
-          <h1 className="text-4xl font-bold text-slate-900 mb-6 font-display">Talk to us about your order.</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 font-display">Talk to us about your order.</h1>
           <div className="space-y-4 text-slate-500 text-sm">
             <div className="flex items-center gap-3"><MapPin size={16} className="text-amber-600" /> {content?.contactAddress}</div>
             <div className="flex items-center gap-3"><Phone size={16} className="text-amber-600" /> {content?.contactPhone}</div>
